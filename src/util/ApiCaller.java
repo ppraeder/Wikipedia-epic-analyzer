@@ -1,8 +1,11 @@
 package util;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -168,34 +171,72 @@ public class ApiCaller {
 	 *             the exception
 	 */
 	public void start() throws Exception {
-		startWatchDog(30);
+		startWatchDog(5);
 		personList = new ArrayList<Person>();
 
 		for (final Category c : categoryList) {
-//			new Thread() {
-//				@Override
-//				public void run() {
-					CategoryApi ca = new CategoryApi();
-					try {
-						// TODO: Hier muss noch eingefügt werden ob ich die
-						// Subcategories will oder die Pages, dies sollte
-						// automatisch nacheinander geschehen
-						Thread.sleep(200);
-						personList.addAll(ca.getCategoryMembers(c));
-						for (Person person : personList) {
-							person.shortenExtract();
-						}
-						categoryFinishedList.add(true);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					System.out.println("Category '" + c.getTitle() + "' done");
-					CommonFunctions.printCurrentTimestamp();
-				}
-//			}.start();
-//		}
-		waitForCategoryMembers();
+			 new Thread() {
+			 @Override
+			 public void run() {
+			CategoryApi ca = new CategoryApi();
 
+			try {
+				// TODO: Hier muss noch eingefügt werden ob ich die
+				// Subcategories will oder die Pages, dies sollte
+				// automatisch nacheinander geschehen
+				Thread.sleep(200);
+				List<Person> tempList = ca.getCategoryMembers(c);
+				List<String> exclusionList = Arrays.asList("References", "Sources", "Notes", "Bibliography", "See also",
+						"External links", "Translations and adaptations","History");
+				for (Person person : tempList) {
+					person.groupExtract();
+					for (String key : person.getExtractMap().keySet()) {
+						if (exclusionList.contains(key)) {
+							continue;
+						}
+						LinkedHashMap<String, String> textMap = person.getExtractMap().get(key);
+						// TODO: Hier noch verfeinerte Stufe analysieren
+						String fullText = "";
+						for (String textMapKey : textMap.keySet()) {
+							fullText += textMap.get(textMapKey);
+						}
+						if (fullText.length() != 0) {
+							// person.getToneMap().put(key,
+							// ToneAnalyzerUtil.getInstance().getTone(fullText));
+						}
+					}
+
+				}
+				personList.addAll(tempList);
+				categoryFinishedList.add(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("Category '" + c.getTitle() + "' done");
+			CommonFunctions.printCurrentTimestamp();
+		}
+		 }.start();
+		 }
+
+		waitForCategoryMembers();
+		// List<String> titleList = new ArrayList<>();
+		// for (Person person : personList) {
+		// LinkedHashMap<String, LinkedHashMap<String, String>> map =
+		// person.getExtractMap();
+		// List<String> list = Arrays.asList("References", "Sources", "Notes",
+		// "Bibliography", "See also",
+		// "External links", "Translations and adaptations");
+		// for (String string : map.keySet()) {
+		// if (list.contains(string)) {
+		// break;
+		// }
+		// if (!titleList.contains(string)) {
+		// titleList.add(string);
+		// }
+		// }
+		//
+		// }
 		// runs async
 		// getCategoriesLinksAndClean(10);
 
@@ -212,8 +253,8 @@ public class ApiCaller {
 			@Override
 			public void run() {
 				while (!watchDogFinished) {
-					System.out.println("WatchDog: Still Alive");
-					CommonFunctions.printCurrentTimestamp();
+					// System.out.println("WatchDog: Still Alive");
+					// CommonFunctions.printCurrentTimestamp();
 					try {
 						Thread.sleep(sleepTime * 1000);
 					} catch (InterruptedException e) {
@@ -222,12 +263,7 @@ public class ApiCaller {
 					}
 				}
 				IO io = new IO();
-				try {
-					io.writeToJsonFile(personList, path);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				io.writeToDatabase(personList);
 				System.out.println("WatchDog: Finished");
 				CommonFunctions.printCurrentTimestamp();
 			}
@@ -241,7 +277,7 @@ public class ApiCaller {
 	private void waitForCategoryMembers() {
 		while (categoryFinishedList.size() != categoryList.size()) {
 			try {
-				Thread.sleep(1);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				System.out.println("Wait for category members error:");
 				e.printStackTrace();
@@ -253,7 +289,7 @@ public class ApiCaller {
 	private void waitForCleanedLinks() {
 		while (cleanLinksFinished.size() != splitListSize) {
 			try {
-				Thread.sleep(1);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				System.out.println("Wait for cleaned links error:");
 				e.printStackTrace();

@@ -10,7 +10,6 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CommonFunctions contains functions which are often used
  */

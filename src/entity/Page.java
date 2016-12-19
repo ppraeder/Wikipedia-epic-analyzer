@@ -1,9 +1,10 @@
 package entity;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
 
 /**
  * The Class Page.
@@ -21,7 +22,8 @@ public class Page {
 
 	private String extract;
 
-	private Map<String, String> extractMap;
+	private LinkedHashMap<String, LinkedHashMap<String, String>> extractMap;
+	private LinkedHashMap<String, ToneAnalysis> toneMap;
 
 	/**
 	 * Gets the title.
@@ -88,43 +90,105 @@ public class Page {
 		this.extract = extract;
 	}
 
-	public Map<String, String> getExtractMap() {
+	public LinkedHashMap<String, LinkedHashMap<String, String>> getExtractMap() {
 		return extractMap;
 	}
 
-	public void setExtractMap(Map<String, String> extractMap) {
+	public void setExtractMap(LinkedHashMap<String, LinkedHashMap<String, String>> extractMap) {
 		this.extractMap = extractMap;
 	}
 
-	public void shortenExtract() {
+	public void groupExtract() {
 		String ex = this.getExtract();
-		// System.out.println(ex.replaceAll("={4}(.*?)={4}", "YYYY"));
-		Matcher m = Pattern.compile("\\={2}(.*?)={2}").matcher(ex); // \\={2}(.*?)={2}
+		Matcher m = Pattern.compile("\\={2}(.*?)={2}").matcher(ex);
 		this.setExtractMap(getExtractMap(m, ex));
+		//this.setExtract(null);
 	}
 
-	private Map<String, String> getExtractMap(Matcher m, String extract) {
+	private LinkedHashMap<String, LinkedHashMap<String, String>> getExtractMap(Matcher m, String extract) {
 		int start = 0;
-		Map<String, String> extractMap = new HashMap<String, String>();
+		LinkedHashMap<String, LinkedHashMap<String, String>> extractMap = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+
 		String caption = "Abstract";
 		int end = 0;
 		String content = "";
 		if (m.find()) {
 			end = m.start();
-			content = extract.substring(start, end).trim();
+			content = getTrimmedSubString(extract, start, end);
+			extractMap.put(caption, getInnerExtractMap(content));
+			start = m.end();
+			caption = m.group(1).trim();
+		}
+		while (m.find()) {
+			// Falsche Überschrift ausgewählt
+			if (m.group(1).startsWith("=")) {
+				continue;
+			}
+			end = m.start();
+			content = getTrimmedSubString(extract, start, end);
+			extractMap.put(caption, getInnerExtractMap(content));
+			start = m.end();
+			caption = m.group(1).trim();
+		}
+		content = getTrimmedSubString(extract, start, extract.length());
+		extractMap.put(caption, getInnerExtractMap(content));
+		return extractMap;
+	}
+
+	/**
+	 * Returns the trimmed substring
+	 * 
+	 * @param string
+	 *            the String to be trimmed and cutted
+	 * @param start
+	 *            the start position
+	 * @param end
+	 *            the end position
+	 * @return
+	 */
+	private String getTrimmedSubString(String string, int start, int end) {
+		return string.substring(start, end).trim();
+	}
+
+	private LinkedHashMap<String, String> getInnerExtractMap(String extract) {
+		Matcher m = Pattern.compile("\\={3}(.*?)={3}").matcher(extract);
+		int start = 0;
+		LinkedHashMap<String, String> extractMap = new LinkedHashMap<String, String>();
+		String caption = "Abstract";
+		int end = 0;
+		String content = "";
+		if (m.find()) {
+			end = m.start();
+			content = getTrimmedSubString(extract, start, end);
 			extractMap.put(caption, content);
 			start = m.end();
 			caption = m.group(1).trim();
 		}
 		while (m.find()) {
+			// Falsche Überschrift ausgewählt
+			if (m.group(1).startsWith("=")) {
+				continue;
+			}
 			end = m.start();
-			content = extract.substring(start, end).trim();
+			content = getTrimmedSubString(extract, start, end);
 			extractMap.put(caption, content);
 			start = m.end();
 			caption = m.group(1).trim();
 		}
-		content = extract.substring(start, extract.length()).trim();
+		content = getTrimmedSubString(extract, start, extract.length());
 		extractMap.put(caption, content);
 		return extractMap;
 	}
+
+	public LinkedHashMap<String, ToneAnalysis> getToneMap() {
+		if (this.toneMap == null) {
+			this.toneMap = new LinkedHashMap<String, ToneAnalysis>();
+		}
+		return this.toneMap;
+	}
+
+	public void setToneMap(LinkedHashMap<String, ToneAnalysis> toneMap) {
+		this.toneMap = toneMap;
+	}
+
 }

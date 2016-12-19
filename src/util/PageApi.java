@@ -82,14 +82,14 @@ public class PageApi {
 				e.printStackTrace();
 			}
 			json = CommonFunctions.getJSON(result);
-			Object strippedJson = ((JSONObject)((JSONObject)json.get("query")).get("pages")).get(String.valueOf(pageId));
+			Object strippedJson = ((JSONObject) ((JSONObject) json.get("query")).get("pages"))
+					.get(String.valueOf(pageId));
 			Person p = gson.fromJson(strippedJson.toString(), new TypeToken<Person>() {
 			}.getType());
-			
-				if (p.getPageid() == pageId) {
-					person.setExtract(p.getExtract());
-				}
-			
+			if (p.getPageid() == pageId) {
+				person.setExtract(p.getExtract());
+			}
+
 		}
 		return returnList;
 	}

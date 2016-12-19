@@ -6,8 +6,8 @@ import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
 public class ToneAnalyzerUtil {
 	private static ToneAnalyzerUtil instance;
 
-	private static final String USERNAME = "b1d6021e-f60e-4dbb-9d7d-5570221c9c3b";
-	private static final String PASSWORD = "p1EGnbRuz2VH";
+	private static final String USERNAME = "90d693e1-6af1-4951-9651-7b5af91db989";
+	private static final String PASSWORD = "lj3zcNhBMhPk";
 	private ToneAnalyzer service;
 
 	private ToneAnalyzerUtil() {
