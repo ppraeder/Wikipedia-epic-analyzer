@@ -75,7 +75,12 @@ public class LinkApi {
 			String result = h.sendGet(query);
 
 			json = CommonFunctions.getJSON(result);
-			list.addAll(p.getPageInfoFromLinkList(json, page));
+			try {
+				list.addAll(p.getPageInfoFromLinkList(json, page));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		} while (getPLcontinue(json));
 		page.setLinkList(list);

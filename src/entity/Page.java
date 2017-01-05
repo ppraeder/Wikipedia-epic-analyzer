@@ -1,6 +1,8 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +26,8 @@ public class Page {
 
 	private LinkedHashMap<String, LinkedHashMap<String, String>> extractMap;
 	private LinkedHashMap<String, ToneAnalysis> toneMap;
+
+	private List<PageExtract> pageExtracts;
 
 	/**
 	 * Gets the title.
@@ -102,7 +106,7 @@ public class Page {
 		String ex = this.getExtract();
 		Matcher m = Pattern.compile("\\={2}(.*?)={2}").matcher(ex);
 		this.setExtractMap(getExtractMap(m, ex));
-		//this.setExtract(null);
+		// this.setExtract(null);
 	}
 
 	private LinkedHashMap<String, LinkedHashMap<String, String>> getExtractMap(Matcher m, String extract) {
@@ -189,6 +193,21 @@ public class Page {
 
 	public void setToneMap(LinkedHashMap<String, ToneAnalysis> toneMap) {
 		this.toneMap = toneMap;
+	}
+
+	public List<PageExtract> getPageExtracts() {
+		return pageExtracts;
+	}
+
+	public void setPageExtracts(List<PageExtract> pageExtracts) {
+		this.pageExtracts = pageExtracts;
+	}
+
+	public void addPageExtract(PageExtract pageExtract) {
+		if (this.pageExtracts == null) {
+			this.pageExtracts = new ArrayList<>();
+		}
+		this.pageExtracts.add(pageExtract);
 	}
 
 }

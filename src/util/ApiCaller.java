@@ -101,6 +101,8 @@ public class ApiCaller {
 			}
 		}.start();
 	}
+	
+	
 
 	/**
 	 * Gets the categories.

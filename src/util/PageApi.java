@@ -112,6 +112,10 @@ public class PageApi {
 
 		JSONObject j = CommonFunctions.getSubJSON(json, "query").getJSONObject("pages")
 				.getJSONObject(String.valueOf(page.getPageid()));
+		if(!j.has("links"))
+		{
+			return new ArrayList<Person>();
+		}
 		JSONArray jsonArray = j.getJSONArray("links");
 		Gson gson = new Gson();
 		List<Person> returnList = gson.fromJson(jsonArray.toString(), new TypeToken<List<Person>>() {

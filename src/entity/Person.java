@@ -1,5 +1,6 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,11 +9,17 @@ import java.util.List;
  *
  */
 public class Person extends Page {
+	
+	public Person(int pageId,String title)
+	{
+		this.setPageid(pageId);
+		this.setTitle(title);
+	}
 	/**
 	 * a list of persons to which this person object has a connection on
 	 * Wikipedia
 	 */
-	private List<Person> linkList;
+	private List<Person> linkList = new ArrayList<>();
 	/**
 	 * a list of categories which are saved on Wikipedia for this person
 	 */
