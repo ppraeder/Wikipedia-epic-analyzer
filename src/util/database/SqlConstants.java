@@ -8,5 +8,7 @@ public class SqlConstants {
 	public static final String PAGE_EXTRACT_INSERT = "INSERT INTO pageextract (pageId,heading,content,position) VALUES (?,?,?,?);";
 
 	public static final String PAGE_EXTRACT_IBM_TONE_UPDATE = "UPDATE pageextract SET ibmTone=? WHERE pageId=? AND heading=?";
+	public static final String PAGE_EXTRACT_LIWC_TONE_UPDATE = "UPDATE pageextract SET liwcTone=? WHERE pageId=? AND heading=?";
 	public static final String PAGE_EXTRACT_GET = "SELECT * FROM pageextract WHERE pageId=?";
+	public static final String PAGE_EXTRACT = "SELECT * FROM pageextract";
 }

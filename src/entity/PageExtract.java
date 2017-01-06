@@ -1,16 +1,25 @@
 package entity;
 
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
+import com.receptiviti.ReceptivitiAnalysis;
 
 public class PageExtract {
 
+	private int pageId;
 	private String heading;
 	private String content;
 	private ToneAnalysis ibmTone;
+	private ReceptivitiAnalysis liwcTone;
 
 	public PageExtract(String heading, String content, ToneAnalysis ibmTone) {
 		this.heading = heading;
 		this.ibmTone = ibmTone;
+		this.content = content;
+	}
+
+	public PageExtract(int pageId, String heading, String content) {
+		this.heading = heading;
+		this.pageId = pageId;
 		this.content = content;
 	}
 
@@ -37,5 +46,23 @@ public class PageExtract {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
+	public int getPageId() {
+		return pageId;
+	}
+
+	public void setPageId(int pageId) {
+		this.pageId = pageId;
+	}
+
+	public ReceptivitiAnalysis getLiwcTone() {
+		return liwcTone;
+	}
+
+	public void setLiwcTone(ReceptivitiAnalysis liwcTone) {
+		this.liwcTone = liwcTone;
+	}
+	
+	
 
 }

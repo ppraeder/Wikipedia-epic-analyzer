@@ -12,6 +12,7 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.ResultSet;
+import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.json.JSONException;
 
 import com.google.gson.Gson;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ElementTone;
@@ -28,6 +30,10 @@ import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.SentenceTone;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneCategory;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneScore;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.receptiviti.ReceptivitiAnalysis;
+import com.receptiviti.samples.personality.Content;
+import com.receptiviti.samples.personality.Receptiviti;
 
 import entity.PageExtract;
 import entity.Person;
@@ -44,6 +50,7 @@ public class IO {
 	private String liwcApiKey = "584da1446c904d05b7115169";
 	private String liwcApiSecretKey = "pd6fl5353JU6yIksMvjoM0uGkwbjydD44QtpvFztT4c";
 	private String liwcPersonId = "584da2a3f86167081ba4e8ff";
+	private String liwcServer = "https://app.receptiviti.com";
 
 	/**
 	 * A content is read from a file and is converted to a person object
@@ -104,7 +111,10 @@ public class IO {
 				String heading = rs.getString("heading");
 				String content = rs.getString("content");
 				ToneAnalysis ibmTone = gson.fromJson(rs.getString("ibmTone"), ToneAnalysis.class);
-				peList.add(new PageExtract(heading, content, ibmTone));
+				ReceptivitiAnalysis liwcTone = gson.fromJson(rs.getString("liwcTone"), ReceptivitiAnalysis.class);
+				PageExtract pe = new PageExtract(heading, content, ibmTone);
+				pe.setLiwcTone(liwcTone);
+				peList.add(pe);
 			}
 			rs.close();
 			p.setPageExtracts(peList);
@@ -117,7 +127,7 @@ public class IO {
 	public void writeToCSV(List<Person> personList, String path) throws IOException {
 		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
 		out.write(
-				"pageId;title;heading;content;Anger;Disgust;Fear;Joy;Sadness;Analytical;Confident;Tentative;Openness;Conscientiousness;Extraversion;Agreeableness;Emotional Range;");
+				"pageId;title;heading;content;Anger;Disgust;Fear;Joy;Sadness;Analytical;Confident;Tentative;Openness;Conscientiousness;Extraversion;Agreeableness;Emotional Range;LIWC;Word Count;Tone;Analytic;Clout;Authentic;Positive Emotion;Negative Emotion;");
 		out.write("\n");
 		for (Person person : personList) {
 			int pageId = person.getPageid();
@@ -126,6 +136,7 @@ public class IO {
 				String heading = pageExtract.getHeading();
 				String content = StringEscapeUtils.escapeJava(pageExtract.getContent().replaceAll(";", "|"));
 				ToneAnalysis ibmTone = pageExtract.getIbmTone();
+				ReceptivitiAnalysis liwcTone = pageExtract.getLiwcTone();
 
 				if (ibmTone != null) {
 					out.write(pageId + ";" + title + ";" + heading + ";" + content + ";");
@@ -140,15 +151,31 @@ public class IO {
 							out.write(";");
 						}
 					}
-					List<SentenceTone> sentencesTone = ibmTone.getSentencesTone();
-					out.write("\n");
+
+					// List<SentenceTone> sentencesTone =
+					// ibmTone.getSentencesTone();
+					out.write(" ;");
+
+					if (liwcTone != null) {
+						Integer wordCount = liwcTone.getLiwcScores().getWc();
+						Double tone = liwcTone.getLiwcScores().getTone();
+						Double analytic = liwcTone.getLiwcScores().getAnalytic();
+						Integer clout = liwcTone.getLiwcScores().getClout();
+						Integer authentic = liwcTone.getLiwcScores().getAuthentic();
+						Integer posEmo = liwcTone.getLiwcScores().getCategories().getPosemo();
+						Integer negEmo = liwcTone.getLiwcScores().getCategories().getNegemo();
+						out.write(wordCount + ";" + String.valueOf(tone).replace('.', ',') + ";"
+								+ String.valueOf(analytic).replace('.', ',') + ";" + clout + ";" + authentic + ";"
+								+ posEmo + ";" + negEmo + ";");
+
+					}
 				}
+				out.write("\n");
 
 			}
-
+			out.close();
+			return;
 		}
-		out.close();
-		return;
 
 	}
 
@@ -156,33 +183,61 @@ public class IO {
 
 	}
 
-	public void getLIWCTone() {
+	public void getLIWCTone() throws UnirestException, JSONException, SQLException {
+
+		DbConnector db = null;
 		try {
+			db = new DbConnector();
+		} catch (ClassNotFoundException | SQLException e1) {
+			e1.printStackTrace();
+		}
+		ResultSet pageResult = db.executeQuery(SqlConstants.PAGE_EXTRACT);
+		List<PageExtract> list = new ArrayList<>();
+		while (pageResult.next()) {
+			int pageId = pageResult.getInt("pageId");
+			String heading = pageResult.getString("heading");
+			String content = pageResult.getString("content");
+			list.add(new PageExtract(pageId, heading, content));
 
-			String url = "https://app.receptiviti.com/v2/api/person/" + liwcPersonId + "/contents";
+		}
 
-			URL obj = new URL(url);
-			
-			HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
+		for (List<PageExtract> splitList : CommonFunctions.split(list, 30)) {
+			getLIWCToneThreaList(splitList);
+		}
+	}
 
-			conn.setRequestMethod("PUT");
+	public void getLIWCToneThreaList(final List<PageExtract> pl) {
+		final Receptiviti r = new Receptiviti(liwcServer, liwcApiKey, liwcApiSecretKey);
 
-			String userpass = "user" + ":" + "pass";
-			String basicAuth = "Basic "
-					+ javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes("UTF-8"));
-			conn.setRequestProperty("Authorization", basicAuth);
+		final Gson g = new Gson();
+		try {
+			final DbConnector db = new DbConnector();
 
-			String data = "{\"format\":\"json\",\"pattern\":\"#\"}";
-			OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
-			out.write(data);
-			out.close();
+			new Thread() {
+				@Override
+				public void run() {
+					for (PageExtract p : pl) {
+						String content = p.getContent();
+						if (!content.equals("")) {
+							try {
+								ReceptivitiAnalysis a = r.analyseContent(liwcPersonId, new Content(content));
+								db.executeUpdate(SqlConstants.PAGE_EXTRACT_LIWC_TONE_UPDATE,
+										Arrays.asList(g.toJson(a), String.valueOf(p.getPageId()), p.getHeading()));
+							} catch (UnirestException | JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
 
-			new InputStreamReader(conn.getInputStream());
+				}
 
-		} catch (Exception e) {
-			e.printStackTrace();
+			}.start();
+		} catch (ClassNotFoundException | SQLException e1) {
+			e1.printStackTrace();
 		}
 	}
 

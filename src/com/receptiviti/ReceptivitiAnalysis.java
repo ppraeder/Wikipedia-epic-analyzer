@@ -12,24 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "_id",
-    "created",
-    "updated",
-    "custom_fields",
-    "content_source",
-    "liwc_scores",
-    "content_date",
-    "content_tags",
-    "user",
-    "language",
-    "person",
-    "communication_recommendation",
-    "receptiviti_scores",
-    "personality_snapshot",
-    "emotional_analysis",
-    "_links"
-})
 public class ReceptivitiAnalysis {
 
     @JsonProperty("_id")

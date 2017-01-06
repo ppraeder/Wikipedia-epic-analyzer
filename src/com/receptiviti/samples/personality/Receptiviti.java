@@ -1,12 +1,16 @@
 package com.receptiviti.samples.personality;
 
+import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.receptiviti.ReceptivitiAnalysis;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -90,40 +94,15 @@ public class Receptiviti {
 		return p;
 	}
 
-	public Content analyseContent(Person person, Content content) throws UnirestException, JSONException {
-		String url = String.format("%s/v2/api/person/%s/contents", this.server, person.id);
-		HttpResponse<JsonNode> response;
-		String id = null;
-		ArrayList<String> snapshot = new ArrayList<>();
-
-		response = Unirest.post(url).header("Content-Type", "application/json").body(content).asJson();
+	public ReceptivitiAnalysis analyseContent(String personId, Content content) throws UnirestException, JSONException {
+		String url = String.format("%s/v2/api/person/%s/contents", this.server, personId);
+		HttpResponse<ReceptivitiAnalysis> response;
+		response = Unirest.post(url).header("Content-Type", "application/json").body(content)
+				.asObject(ReceptivitiAnalysis.class);
 		if (response.getStatus() == 200) {
-			try {
-				id = response.getBody().getObject().getString("_id");
-				JSONArray array;
-
-				array = response.getBody().getObject().getJSONArray("personality_snapshot");
-
-				for (int i = 0; i < array.length(); i++) {
-					try {
-						snapshot.add(array.getJSONObject(i).getString("summary") + ": "
-								+ array.getJSONObject(i).getString("description"));
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			return response.getBody();
 		} else {
-
+			return null;
 		}
-
-		Content i = new Content(content);
-		i.id = id;
-		i.snapshot = snapshot;
-		return i;
 	}
 }

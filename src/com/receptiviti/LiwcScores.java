@@ -11,17 +11,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "tone",
-    "sixLtr",
-    "clout",
-    "wps",
-    "analytic",
-    "wc",
-    "dic",
-    "authentic",
-    "categories"
-})
 public class LiwcScores {
 
     @JsonProperty("tone")
