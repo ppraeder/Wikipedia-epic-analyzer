@@ -1,3 +1,11 @@
+/*
+ * Created during the master thesis of
+ * 
+ * Peter Praeder - University of Cologne - praederp@smail.uni-koeln.de
+ * 
+ * Copyright 2016-2017
+ * 
+ */
 package masterThesis;
 
 import java.io.FileNotFoundException;
@@ -40,13 +48,17 @@ public class Main {
 		// category.add("Epic poems in Greek");
 		// category.add("A_Song_of_Ice_and_Fire_books");
 		IO io = new IO();
-		io.writeToCSV(io.getExtractsFromDatabase(), "C:/Users/praed/Desktop/Neues Textdokument.csv");
-		// try {
-		// io.getLIWCTone();
-		// } catch (UnirestException | JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		// io.writeToCSV(io.getExtractsFromDatabase(),
+		// "C:/Users/praed/Desktop/Neues Textdokument.csv");
+//		try {
+//			io.getLIWCTone();
+//		} catch (UnirestException | JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		io.getIBMTone();
+		
+		
 		// LinkApi la = new LinkApi();
 		// for (Person p : personList) {
 		// try {

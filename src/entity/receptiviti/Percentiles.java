@@ -1,8 +1,15 @@
+/*
+ * Created during the master thesis of
+ * 
+ * Peter Praeder - University of Cologne - praederp@smail.uni-koeln.de
+ * 
+ * Copyright 2016-2017
+ * 
+ */
 
-package com.receptiviti;
+package entity.receptiviti;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -11,6 +18,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+/**
+ * 
+ * This class is part of the analysis result when calling the receptivity API
+ *
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "imaginative",
@@ -73,716 +85,716 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "happiness",
     "work_oriented"
 })
-public class Warnings {
+public class Percentiles {
 
     @JsonProperty("imaginative")
-    private List<String> imaginative = null;
+    private Double imaginative;
     @JsonProperty("netspeak_focus")
-    private List<String> netspeakFocus = null;
+    private Double netspeakFocus;
     @JsonProperty("humble")
-    private List<String> humble = null;
+    private Double humble;
     @JsonProperty("liberal")
-    private List<String> liberal = null;
+    private Double liberal;
     @JsonProperty("self_assured")
-    private List<String> selfAssured = null;
+    private Double selfAssured;
     @JsonProperty("body_focus")
-    private List<String> bodyFocus = null;
+    private Double bodyFocus;
     @JsonProperty("trusting")
-    private List<String> trusting = null;
+    private Double trusting;
     @JsonProperty("organized")
-    private List<String> organized = null;
+    private Double organized;
     @JsonProperty("melancholy")
-    private List<String> melancholy = null;
+    private Double melancholy;
     @JsonProperty("intellectual")
-    private List<String> intellectual = null;
+    private Integer intellectual;
     @JsonProperty("cheerful")
-    private List<String> cheerful = null;
+    private Double cheerful;
     @JsonProperty("disciplined")
-    private List<String> disciplined = null;
+    private Double disciplined;
     @JsonProperty("neuroticism")
-    private List<String> neuroticism = null;
+    private Double neuroticism;
     @JsonProperty("cooperative")
-    private List<String> cooperative = null;
+    private Double cooperative;
     @JsonProperty("social_skills")
-    private List<String> socialSkills = null;
+    private Double socialSkills;
     @JsonProperty("openness")
-    private List<String> openness = null;
+    private Double openness;
     @JsonProperty("cold")
-    private List<String> cold = null;
+    private Double cold;
     @JsonProperty("adjustment")
-    private List<String> adjustment = null;
+    private Double adjustment;
     @JsonProperty("religion_oriented")
-    private List<String> religionOriented = null;
+    private Double religionOriented;
     @JsonProperty("empathetic")
-    private List<String> empathetic = null;
+    private Double empathetic;
     @JsonProperty("food_focus")
-    private List<String> foodFocus = null;
+    private Double foodFocus;
     @JsonProperty("generous")
-    private List<String> generous = null;
+    private Integer generous;
     @JsonProperty("sexual_focus")
-    private List<String> sexualFocus = null;
+    private Double sexualFocus;
     @JsonProperty("power_driven")
-    private List<String> powerDriven = null;
+    private Integer powerDriven;
     @JsonProperty("friend_focus")
-    private List<String> friendFocus = null;
+    private Double friendFocus;
     @JsonProperty("extraversion")
-    private List<String> extraversion = null;
+    private Double extraversion;
     @JsonProperty("agreeableness")
-    private List<String> agreeableness = null;
+    private Double agreeableness;
     @JsonProperty("depression")
-    private List<String> depression = null;
+    private Double depression;
     @JsonProperty("ambitious")
-    private List<String> ambitious = null;
+    private Double ambitious;
     @JsonProperty("health_oriented")
-    private List<String> healthOriented = null;
+    private Double healthOriented;
     @JsonProperty("friendly")
-    private List<String> friendly = null;
+    private Double friendly;
     @JsonProperty("artistic")
-    private List<String> artistic = null;
+    private Double artistic;
     @JsonProperty("independent")
-    private List<String> independent = null;
+    private Integer independent;
     @JsonProperty("type_a")
-    private List<String> typeA = null;
+    private Integer typeA;
     @JsonProperty("workhorse")
-    private List<String> workhorse = null;
+    private Double workhorse;
     @JsonProperty("reward_bias")
-    private List<String> rewardBias = null;
+    private Double rewardBias;
     @JsonProperty("energetic")
-    private List<String> energetic = null;
+    private Double energetic;
     @JsonProperty("self_conscious")
-    private List<String> selfConscious = null;
+    private Double selfConscious;
     @JsonProperty("assertive")
-    private List<String> assertive = null;
+    private Double assertive;
     @JsonProperty("insecure")
-    private List<String> insecure = null;
+    private Double insecure;
     @JsonProperty("leisure_oriented")
-    private List<String> leisureOriented = null;
+    private Double leisureOriented;
     @JsonProperty("impulsive")
-    private List<String> impulsive = null;
+    private Double impulsive;
     @JsonProperty("cautious")
-    private List<String> cautious = null;
+    private Double cautious;
     @JsonProperty("conscientiousness")
-    private List<String> conscientiousness = null;
+    private Double conscientiousness;
     @JsonProperty("active")
-    private List<String> active = null;
+    private Double active;
     @JsonProperty("thinking_style")
-    private List<String> thinkingStyle = null;
+    private Double thinkingStyle;
     @JsonProperty("dutiful")
-    private List<String> dutiful = null;
+    private Double dutiful;
     @JsonProperty("genuine")
-    private List<String> genuine = null;
+    private Double genuine;
     @JsonProperty("adventurous")
-    private List<String> adventurous = null;
+    private Double adventurous;
     @JsonProperty("sociable")
-    private List<String> sociable = null;
+    private Double sociable;
     @JsonProperty("family_oriented")
-    private List<String> familyOriented = null;
+    private Double familyOriented;
     @JsonProperty("emotionally_aware")
-    private List<String> emotionallyAware = null;
+    private Double emotionallyAware;
     @JsonProperty("persuasive")
-    private List<String> persuasive = null;
+    private Double persuasive;
     @JsonProperty("anxious")
-    private List<String> anxious = null;
+    private Double anxious;
     @JsonProperty("aggressive")
-    private List<String> aggressive = null;
+    private Double aggressive;
     @JsonProperty("money_oriented")
-    private List<String> moneyOriented = null;
+    private Double moneyOriented;
     @JsonProperty("stressed")
-    private List<String> stressed = null;
+    private Double stressed;
     @JsonProperty("happiness")
-    private List<String> happiness = null;
+    private Integer happiness;
     @JsonProperty("work_oriented")
-    private List<String> workOriented = null;
+    private Double workOriented;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("imaginative")
-    public List<String> getImaginative() {
+    public Double getImaginative() {
         return imaginative;
     }
 
     @JsonProperty("imaginative")
-    public void setImaginative(List<String> imaginative) {
+    public void setImaginative(Double imaginative) {
         this.imaginative = imaginative;
     }
 
     @JsonProperty("netspeak_focus")
-    public List<String> getNetspeakFocus() {
+    public Double getNetspeakFocus() {
         return netspeakFocus;
     }
 
     @JsonProperty("netspeak_focus")
-    public void setNetspeakFocus(List<String> netspeakFocus) {
+    public void setNetspeakFocus(Double netspeakFocus) {
         this.netspeakFocus = netspeakFocus;
     }
 
     @JsonProperty("humble")
-    public List<String> getHumble() {
+    public Double getHumble() {
         return humble;
     }
 
     @JsonProperty("humble")
-    public void setHumble(List<String> humble) {
+    public void setHumble(Double humble) {
         this.humble = humble;
     }
 
     @JsonProperty("liberal")
-    public List<String> getLiberal() {
+    public Double getLiberal() {
         return liberal;
     }
 
     @JsonProperty("liberal")
-    public void setLiberal(List<String> liberal) {
+    public void setLiberal(Double liberal) {
         this.liberal = liberal;
     }
 
     @JsonProperty("self_assured")
-    public List<String> getSelfAssured() {
+    public Double getSelfAssured() {
         return selfAssured;
     }
 
     @JsonProperty("self_assured")
-    public void setSelfAssured(List<String> selfAssured) {
+    public void setSelfAssured(Double selfAssured) {
         this.selfAssured = selfAssured;
     }
 
     @JsonProperty("body_focus")
-    public List<String> getBodyFocus() {
+    public Double getBodyFocus() {
         return bodyFocus;
     }
 
     @JsonProperty("body_focus")
-    public void setBodyFocus(List<String> bodyFocus) {
+    public void setBodyFocus(Double bodyFocus) {
         this.bodyFocus = bodyFocus;
     }
 
     @JsonProperty("trusting")
-    public List<String> getTrusting() {
+    public Double getTrusting() {
         return trusting;
     }
 
     @JsonProperty("trusting")
-    public void setTrusting(List<String> trusting) {
+    public void setTrusting(Double trusting) {
         this.trusting = trusting;
     }
 
     @JsonProperty("organized")
-    public List<String> getOrganized() {
+    public Double getOrganized() {
         return organized;
     }
 
     @JsonProperty("organized")
-    public void setOrganized(List<String> organized) {
+    public void setOrganized(Double organized) {
         this.organized = organized;
     }
 
     @JsonProperty("melancholy")
-    public List<String> getMelancholy() {
+    public Double getMelancholy() {
         return melancholy;
     }
 
     @JsonProperty("melancholy")
-    public void setMelancholy(List<String> melancholy) {
+    public void setMelancholy(Double melancholy) {
         this.melancholy = melancholy;
     }
 
     @JsonProperty("intellectual")
-    public List<String> getIntellectual() {
+    public Integer getIntellectual() {
         return intellectual;
     }
 
     @JsonProperty("intellectual")
-    public void setIntellectual(List<String> intellectual) {
+    public void setIntellectual(Integer intellectual) {
         this.intellectual = intellectual;
     }
 
     @JsonProperty("cheerful")
-    public List<String> getCheerful() {
+    public Double getCheerful() {
         return cheerful;
     }
 
     @JsonProperty("cheerful")
-    public void setCheerful(List<String> cheerful) {
+    public void setCheerful(Double cheerful) {
         this.cheerful = cheerful;
     }
 
     @JsonProperty("disciplined")
-    public List<String> getDisciplined() {
+    public Double getDisciplined() {
         return disciplined;
     }
 
     @JsonProperty("disciplined")
-    public void setDisciplined(List<String> disciplined) {
+    public void setDisciplined(Double disciplined) {
         this.disciplined = disciplined;
     }
 
     @JsonProperty("neuroticism")
-    public List<String> getNeuroticism() {
+    public Double getNeuroticism() {
         return neuroticism;
     }
 
     @JsonProperty("neuroticism")
-    public void setNeuroticism(List<String> neuroticism) {
+    public void setNeuroticism(Double neuroticism) {
         this.neuroticism = neuroticism;
     }
 
     @JsonProperty("cooperative")
-    public List<String> getCooperative() {
+    public Double getCooperative() {
         return cooperative;
     }
 
     @JsonProperty("cooperative")
-    public void setCooperative(List<String> cooperative) {
+    public void setCooperative(Double cooperative) {
         this.cooperative = cooperative;
     }
 
     @JsonProperty("social_skills")
-    public List<String> getSocialSkills() {
+    public Double getSocialSkills() {
         return socialSkills;
     }
 
     @JsonProperty("social_skills")
-    public void setSocialSkills(List<String> socialSkills) {
+    public void setSocialSkills(Double socialSkills) {
         this.socialSkills = socialSkills;
     }
 
     @JsonProperty("openness")
-    public List<String> getOpenness() {
+    public Double getOpenness() {
         return openness;
     }
 
     @JsonProperty("openness")
-    public void setOpenness(List<String> openness) {
+    public void setOpenness(Double openness) {
         this.openness = openness;
     }
 
     @JsonProperty("cold")
-    public List<String> getCold() {
+    public Double getCold() {
         return cold;
     }
 
     @JsonProperty("cold")
-    public void setCold(List<String> cold) {
+    public void setCold(Double cold) {
         this.cold = cold;
     }
 
     @JsonProperty("adjustment")
-    public List<String> getAdjustment() {
+    public Double getAdjustment() {
         return adjustment;
     }
 
     @JsonProperty("adjustment")
-    public void setAdjustment(List<String> adjustment) {
+    public void setAdjustment(Double adjustment) {
         this.adjustment = adjustment;
     }
 
     @JsonProperty("religion_oriented")
-    public List<String> getReligionOriented() {
+    public Double getReligionOriented() {
         return religionOriented;
     }
 
     @JsonProperty("religion_oriented")
-    public void setReligionOriented(List<String> religionOriented) {
+    public void setReligionOriented(Double religionOriented) {
         this.religionOriented = religionOriented;
     }
 
     @JsonProperty("empathetic")
-    public List<String> getEmpathetic() {
+    public Double getEmpathetic() {
         return empathetic;
     }
 
     @JsonProperty("empathetic")
-    public void setEmpathetic(List<String> empathetic) {
+    public void setEmpathetic(Double empathetic) {
         this.empathetic = empathetic;
     }
 
     @JsonProperty("food_focus")
-    public List<String> getFoodFocus() {
+    public Double getFoodFocus() {
         return foodFocus;
     }
 
     @JsonProperty("food_focus")
-    public void setFoodFocus(List<String> foodFocus) {
+    public void setFoodFocus(Double foodFocus) {
         this.foodFocus = foodFocus;
     }
 
     @JsonProperty("generous")
-    public List<String> getGenerous() {
+    public Integer getGenerous() {
         return generous;
     }
 
     @JsonProperty("generous")
-    public void setGenerous(List<String> generous) {
+    public void setGenerous(Integer generous) {
         this.generous = generous;
     }
 
     @JsonProperty("sexual_focus")
-    public List<String> getSexualFocus() {
+    public Double getSexualFocus() {
         return sexualFocus;
     }
 
     @JsonProperty("sexual_focus")
-    public void setSexualFocus(List<String> sexualFocus) {
+    public void setSexualFocus(Double sexualFocus) {
         this.sexualFocus = sexualFocus;
     }
 
     @JsonProperty("power_driven")
-    public List<String> getPowerDriven() {
+    public Integer getPowerDriven() {
         return powerDriven;
     }
 
     @JsonProperty("power_driven")
-    public void setPowerDriven(List<String> powerDriven) {
+    public void setPowerDriven(Integer powerDriven) {
         this.powerDriven = powerDriven;
     }
 
     @JsonProperty("friend_focus")
-    public List<String> getFriendFocus() {
+    public Double getFriendFocus() {
         return friendFocus;
     }
 
     @JsonProperty("friend_focus")
-    public void setFriendFocus(List<String> friendFocus) {
+    public void setFriendFocus(Double friendFocus) {
         this.friendFocus = friendFocus;
     }
 
     @JsonProperty("extraversion")
-    public List<String> getExtraversion() {
+    public Double getExtraversion() {
         return extraversion;
     }
 
     @JsonProperty("extraversion")
-    public void setExtraversion(List<String> extraversion) {
+    public void setExtraversion(Double extraversion) {
         this.extraversion = extraversion;
     }
 
     @JsonProperty("agreeableness")
-    public List<String> getAgreeableness() {
+    public Double getAgreeableness() {
         return agreeableness;
     }
 
     @JsonProperty("agreeableness")
-    public void setAgreeableness(List<String> agreeableness) {
+    public void setAgreeableness(Double agreeableness) {
         this.agreeableness = agreeableness;
     }
 
     @JsonProperty("depression")
-    public List<String> getDepression() {
+    public Double getDepression() {
         return depression;
     }
 
     @JsonProperty("depression")
-    public void setDepression(List<String> depression) {
+    public void setDepression(Double depression) {
         this.depression = depression;
     }
 
     @JsonProperty("ambitious")
-    public List<String> getAmbitious() {
+    public Double getAmbitious() {
         return ambitious;
     }
 
     @JsonProperty("ambitious")
-    public void setAmbitious(List<String> ambitious) {
+    public void setAmbitious(Double ambitious) {
         this.ambitious = ambitious;
     }
 
     @JsonProperty("health_oriented")
-    public List<String> getHealthOriented() {
+    public Double getHealthOriented() {
         return healthOriented;
     }
 
     @JsonProperty("health_oriented")
-    public void setHealthOriented(List<String> healthOriented) {
+    public void setHealthOriented(Double healthOriented) {
         this.healthOriented = healthOriented;
     }
 
     @JsonProperty("friendly")
-    public List<String> getFriendly() {
+    public Double getFriendly() {
         return friendly;
     }
 
     @JsonProperty("friendly")
-    public void setFriendly(List<String> friendly) {
+    public void setFriendly(Double friendly) {
         this.friendly = friendly;
     }
 
     @JsonProperty("artistic")
-    public List<String> getArtistic() {
+    public Double getArtistic() {
         return artistic;
     }
 
     @JsonProperty("artistic")
-    public void setArtistic(List<String> artistic) {
+    public void setArtistic(Double artistic) {
         this.artistic = artistic;
     }
 
     @JsonProperty("independent")
-    public List<String> getIndependent() {
+    public Integer getIndependent() {
         return independent;
     }
 
     @JsonProperty("independent")
-    public void setIndependent(List<String> independent) {
+    public void setIndependent(Integer independent) {
         this.independent = independent;
     }
 
     @JsonProperty("type_a")
-    public List<String> getTypeA() {
+    public Integer getTypeA() {
         return typeA;
     }
 
     @JsonProperty("type_a")
-    public void setTypeA(List<String> typeA) {
+    public void setTypeA(Integer typeA) {
         this.typeA = typeA;
     }
 
     @JsonProperty("workhorse")
-    public List<String> getWorkhorse() {
+    public Double getWorkhorse() {
         return workhorse;
     }
 
     @JsonProperty("workhorse")
-    public void setWorkhorse(List<String> workhorse) {
+    public void setWorkhorse(Double workhorse) {
         this.workhorse = workhorse;
     }
 
     @JsonProperty("reward_bias")
-    public List<String> getRewardBias() {
+    public Double getRewardBias() {
         return rewardBias;
     }
 
     @JsonProperty("reward_bias")
-    public void setRewardBias(List<String> rewardBias) {
+    public void setRewardBias(Double rewardBias) {
         this.rewardBias = rewardBias;
     }
 
     @JsonProperty("energetic")
-    public List<String> getEnergetic() {
+    public Double getEnergetic() {
         return energetic;
     }
 
     @JsonProperty("energetic")
-    public void setEnergetic(List<String> energetic) {
+    public void setEnergetic(Double energetic) {
         this.energetic = energetic;
     }
 
     @JsonProperty("self_conscious")
-    public List<String> getSelfConscious() {
+    public Double getSelfConscious() {
         return selfConscious;
     }
 
     @JsonProperty("self_conscious")
-    public void setSelfConscious(List<String> selfConscious) {
+    public void setSelfConscious(Double selfConscious) {
         this.selfConscious = selfConscious;
     }
 
     @JsonProperty("assertive")
-    public List<String> getAssertive() {
+    public Double getAssertive() {
         return assertive;
     }
 
     @JsonProperty("assertive")
-    public void setAssertive(List<String> assertive) {
+    public void setAssertive(Double assertive) {
         this.assertive = assertive;
     }
 
     @JsonProperty("insecure")
-    public List<String> getInsecure() {
+    public Double getInsecure() {
         return insecure;
     }
 
     @JsonProperty("insecure")
-    public void setInsecure(List<String> insecure) {
+    public void setInsecure(Double insecure) {
         this.insecure = insecure;
     }
 
     @JsonProperty("leisure_oriented")
-    public List<String> getLeisureOriented() {
+    public Double getLeisureOriented() {
         return leisureOriented;
     }
 
     @JsonProperty("leisure_oriented")
-    public void setLeisureOriented(List<String> leisureOriented) {
+    public void setLeisureOriented(Double leisureOriented) {
         this.leisureOriented = leisureOriented;
     }
 
     @JsonProperty("impulsive")
-    public List<String> getImpulsive() {
+    public Double getImpulsive() {
         return impulsive;
     }
 
     @JsonProperty("impulsive")
-    public void setImpulsive(List<String> impulsive) {
+    public void setImpulsive(Double impulsive) {
         this.impulsive = impulsive;
     }
 
     @JsonProperty("cautious")
-    public List<String> getCautious() {
+    public Double getCautious() {
         return cautious;
     }
 
     @JsonProperty("cautious")
-    public void setCautious(List<String> cautious) {
+    public void setCautious(Double cautious) {
         this.cautious = cautious;
     }
 
     @JsonProperty("conscientiousness")
-    public List<String> getConscientiousness() {
+    public Double getConscientiousness() {
         return conscientiousness;
     }
 
     @JsonProperty("conscientiousness")
-    public void setConscientiousness(List<String> conscientiousness) {
+    public void setConscientiousness(Double conscientiousness) {
         this.conscientiousness = conscientiousness;
     }
 
     @JsonProperty("active")
-    public List<String> getActive() {
+    public Double getActive() {
         return active;
     }
 
     @JsonProperty("active")
-    public void setActive(List<String> active) {
+    public void setActive(Double active) {
         this.active = active;
     }
 
     @JsonProperty("thinking_style")
-    public List<String> getThinkingStyle() {
+    public Double getThinkingStyle() {
         return thinkingStyle;
     }
 
     @JsonProperty("thinking_style")
-    public void setThinkingStyle(List<String> thinkingStyle) {
+    public void setThinkingStyle(Double thinkingStyle) {
         this.thinkingStyle = thinkingStyle;
     }
 
     @JsonProperty("dutiful")
-    public List<String> getDutiful() {
+    public Double getDutiful() {
         return dutiful;
     }
 
     @JsonProperty("dutiful")
-    public void setDutiful(List<String> dutiful) {
+    public void setDutiful(Double dutiful) {
         this.dutiful = dutiful;
     }
 
     @JsonProperty("genuine")
-    public List<String> getGenuine() {
+    public Double getGenuine() {
         return genuine;
     }
 
     @JsonProperty("genuine")
-    public void setGenuine(List<String> genuine) {
+    public void setGenuine(Double genuine) {
         this.genuine = genuine;
     }
 
     @JsonProperty("adventurous")
-    public List<String> getAdventurous() {
+    public Double getAdventurous() {
         return adventurous;
     }
 
     @JsonProperty("adventurous")
-    public void setAdventurous(List<String> adventurous) {
+    public void setAdventurous(Double adventurous) {
         this.adventurous = adventurous;
     }
 
     @JsonProperty("sociable")
-    public List<String> getSociable() {
+    public Double getSociable() {
         return sociable;
     }
 
     @JsonProperty("sociable")
-    public void setSociable(List<String> sociable) {
+    public void setSociable(Double sociable) {
         this.sociable = sociable;
     }
 
     @JsonProperty("family_oriented")
-    public List<String> getFamilyOriented() {
+    public Double getFamilyOriented() {
         return familyOriented;
     }
 
     @JsonProperty("family_oriented")
-    public void setFamilyOriented(List<String> familyOriented) {
+    public void setFamilyOriented(Double familyOriented) {
         this.familyOriented = familyOriented;
     }
 
     @JsonProperty("emotionally_aware")
-    public List<String> getEmotionallyAware() {
+    public Double getEmotionallyAware() {
         return emotionallyAware;
     }
 
     @JsonProperty("emotionally_aware")
-    public void setEmotionallyAware(List<String> emotionallyAware) {
+    public void setEmotionallyAware(Double emotionallyAware) {
         this.emotionallyAware = emotionallyAware;
     }
 
     @JsonProperty("persuasive")
-    public List<String> getPersuasive() {
+    public Double getPersuasive() {
         return persuasive;
     }
 
     @JsonProperty("persuasive")
-    public void setPersuasive(List<String> persuasive) {
+    public void setPersuasive(Double persuasive) {
         this.persuasive = persuasive;
     }
 
     @JsonProperty("anxious")
-    public List<String> getAnxious() {
+    public Double getAnxious() {
         return anxious;
     }
 
     @JsonProperty("anxious")
-    public void setAnxious(List<String> anxious) {
+    public void setAnxious(Double anxious) {
         this.anxious = anxious;
     }
 
     @JsonProperty("aggressive")
-    public List<String> getAggressive() {
+    public Double getAggressive() {
         return aggressive;
     }
 
     @JsonProperty("aggressive")
-    public void setAggressive(List<String> aggressive) {
+    public void setAggressive(Double aggressive) {
         this.aggressive = aggressive;
     }
 
     @JsonProperty("money_oriented")
-    public List<String> getMoneyOriented() {
+    public Double getMoneyOriented() {
         return moneyOriented;
     }
 
     @JsonProperty("money_oriented")
-    public void setMoneyOriented(List<String> moneyOriented) {
+    public void setMoneyOriented(Double moneyOriented) {
         this.moneyOriented = moneyOriented;
     }
 
     @JsonProperty("stressed")
-    public List<String> getStressed() {
+    public Double getStressed() {
         return stressed;
     }
 
     @JsonProperty("stressed")
-    public void setStressed(List<String> stressed) {
+    public void setStressed(Double stressed) {
         this.stressed = stressed;
     }
 
     @JsonProperty("happiness")
-    public List<String> getHappiness() {
+    public Integer getHappiness() {
         return happiness;
     }
 
     @JsonProperty("happiness")
-    public void setHappiness(List<String> happiness) {
+    public void setHappiness(Integer happiness) {
         this.happiness = happiness;
     }
 
     @JsonProperty("work_oriented")
-    public List<String> getWorkOriented() {
+    public Double getWorkOriented() {
         return workOriented;
     }
 
     @JsonProperty("work_oriented")
-    public void setWorkOriented(List<String> workOriented) {
+    public void setWorkOriented(Double workOriented) {
         this.workOriented = workOriented;
     }
 

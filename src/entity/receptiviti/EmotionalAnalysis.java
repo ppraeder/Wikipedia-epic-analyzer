@@ -1,5 +1,13 @@
+/*
+ * Created during the master thesis of
+ * 
+ * Peter Praeder - University of Cologne - praederp@smail.uni-koeln.de
+ * 
+ * Copyright 2016-2017
+ * 
+ */
 
-package com.receptiviti;
+package entity.receptiviti;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +18,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+/**
+ * 
+ * This class is part of the analysis result when calling the receptivity API
+ *
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "facets",

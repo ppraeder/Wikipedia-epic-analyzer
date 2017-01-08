@@ -1,3 +1,11 @@
+/*
+ * Created during the master thesis of
+ * 
+ * Peter Praeder - University of Cologne - praederp@smail.uni-koeln.de
+ * 
+ * Copyright 2016-2017
+ * 
+ */
 package util;
 
 import java.io.IOException;
@@ -183,21 +191,13 @@ public class ApiCaller {
 			CategoryApi ca = new CategoryApi();
 
 			try {
-				// TODO: Hier muss noch eingefügt werden ob ich die
-				// Subcategories will oder die Pages, dies sollte
-				// automatisch nacheinander geschehen
 				Thread.sleep(200);
 				List<Person> tempList = ca.getCategoryMembers(c);
-				List<String> exclusionList = Arrays.asList("References", "Sources", "Notes", "Bibliography", "See also",
-						"External links", "Translations and adaptations","History");
+				
 				for (Person person : tempList) {
 					person.groupExtract();
 					for (String key : person.getExtractMap().keySet()) {
-						if (exclusionList.contains(key)) {
-							continue;
-						}
 						LinkedHashMap<String, String> textMap = person.getExtractMap().get(key);
-						// TODO: Hier noch verfeinerte Stufe analysieren
 						String fullText = "";
 						for (String textMapKey : textMap.keySet()) {
 							fullText += textMap.get(textMapKey);
@@ -214,7 +214,6 @@ public class ApiCaller {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 			System.out.println("Category '" + c.getTitle() + "' done");
 			CommonFunctions.printCurrentTimestamp();
 		}

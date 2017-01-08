@@ -1,3 +1,11 @@
+/*
+ * Created during the master thesis of
+ * 
+ * Peter Praeder - University of Cologne - praederp@smail.uni-koeln.de
+ * 
+ * Copyright 2016-2017
+ * 
+ */
 package entity;
 
 import java.util.ArrayList;
@@ -7,6 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
+
+import entity.receptiviti.ReceptivitiAnalysis;
 
 /**
  * The Class Page.
@@ -26,6 +36,9 @@ public class Page {
 
 	private LinkedHashMap<String, LinkedHashMap<String, String>> extractMap;
 	private LinkedHashMap<String, ToneAnalysis> toneMap;
+	
+	private ToneAnalysis ibmTone;
+	private ReceptivitiAnalysis liwcTone;
 
 	private List<PageExtract> pageExtracts;
 
@@ -104,7 +117,7 @@ public class Page {
 
 	public void groupExtract() {
 		String ex = this.getExtract();
-		Matcher m = Pattern.compile("\\={2}(.*?)={2}").matcher(ex);
+		Matcher m = Pattern.compile("\\[^=]={2}[^=](.*?)[^=]={2}[^=]").matcher(ex);
 		this.setExtractMap(getExtractMap(m, ex));
 		// this.setExtract(null);
 	}
@@ -208,6 +221,23 @@ public class Page {
 			this.pageExtracts = new ArrayList<>();
 		}
 		this.pageExtracts.add(pageExtract);
+	}
+	
+
+	public ToneAnalysis getIbmTone() {
+		return ibmTone;
+	}
+
+	public void setIbmTone(ToneAnalysis ibmTone) {
+		this.ibmTone = ibmTone;
+	}
+
+	public ReceptivitiAnalysis getLiwcTone() {
+		return liwcTone;
+	}
+
+	public void setLiwcTone(ReceptivitiAnalysis liwcTone) {
+		this.liwcTone = liwcTone;
 	}
 
 }

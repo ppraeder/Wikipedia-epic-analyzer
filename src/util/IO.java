@@ -1,3 +1,11 @@
+/*
+ * Created during the master thesis of
+ * 
+ * Peter Praeder - University of Cologne - praederp@smail.uni-koeln.de
+ * 
+ * Copyright 2016-2017
+ * 
+ */
 package util;
 
 import java.io.BufferedReader;
@@ -31,12 +39,11 @@ import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneCategory;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneScore;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.receptiviti.ReceptivitiAnalysis;
-import com.receptiviti.samples.personality.Content;
-import com.receptiviti.samples.personality.Receptiviti;
 
 import entity.PageExtract;
 import entity.Person;
+import entity.receptiviti.Content;
+import entity.receptiviti.ReceptivitiAnalysis;
 import util.database.DbConnector;
 import util.database.SqlConstants;
 
@@ -46,12 +53,6 @@ import util.database.SqlConstants;
  *
  */
 public class IO {
-
-	private String liwcApiKey = "584da1446c904d05b7115169";
-	private String liwcApiSecretKey = "pd6fl5353JU6yIksMvjoM0uGkwbjydD44QtpvFztT4c";
-	private String liwcPersonId = "584da2a3f86167081ba4e8ff";
-	private String liwcServer = "https://app.receptiviti.com";
-
 	/**
 	 * A content is read from a file and is converted to a person object
 	 * 
@@ -104,15 +105,22 @@ public class IO {
 		while (pageResult.next()) {
 			int pageId = pageResult.getInt("pageId");
 			String title = pageResult.getString("title");
+			ToneAnalysis ibmTone = gson.fromJson(pageResult.getString("ibmTone"), ToneAnalysis.class);
+			ReceptivitiAnalysis liwcTone = gson.fromJson(pageResult.getString("liwcTone"), ReceptivitiAnalysis.class);
 			Person p = new Person(pageId, title);
+			p.setIbmTone(ibmTone);
+			p.setLiwcTone(liwcTone);
 			ResultSet rs = db.executeQuery(SqlConstants.PAGE_EXTRACT_GET, Arrays.asList(String.valueOf(pageId)));
 			List<PageExtract> peList = new ArrayList<>();
 			while (rs.next()) {
 				String heading = rs.getString("heading");
 				String content = rs.getString("content");
-				ToneAnalysis ibmTone = gson.fromJson(rs.getString("ibmTone"), ToneAnalysis.class);
-				ReceptivitiAnalysis liwcTone = gson.fromJson(rs.getString("liwcTone"), ReceptivitiAnalysis.class);
-				PageExtract pe = new PageExtract(heading, content, ibmTone);
+				// ToneAnalysis ibmTone = gson.fromJson(rs.getString("ibmTone"),
+				// ToneAnalysis.class);
+				// ReceptivitiAnalysis liwcTone =
+				// gson.fromJson(rs.getString("liwcTone"),
+				// ReceptivitiAnalysis.class);
+				PageExtract pe = new PageExtract(heading, content);
 				pe.setLiwcTone(liwcTone);
 				peList.add(pe);
 			}
@@ -126,8 +134,14 @@ public class IO {
 
 	public void writeToCSV(List<Person> personList, String path) throws IOException {
 		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
+		// Titel
+		out.write("pageId;title;earliestYear;latestYear;heading;content;");
+		// IBM
 		out.write(
-				"pageId;title;heading;content;Anger;Disgust;Fear;Joy;Sadness;Analytical;Confident;Tentative;Openness;Conscientiousness;Extraversion;Agreeableness;Emotional Range;LIWC;Word Count;Tone;Analytic;Clout;Authentic;Positive Emotion;Negative Emotion;");
+				"Anger;Disgust;Fear;Joy;Sadness;Analytical;Confident;Tentative;Openness;Conscientiousness;Extraversion;Agreeableness;Emotional Range;");
+		// LIWC
+		out.write(
+				"LIWC;Word Count;Analytical thinking;Clout;Authentic;Emotional tone;Positive Emotion;Negative Emotion;Anxiety;Anger;Sadness;Tentative;Certainty,Power;Risk;Death");
 		out.write("\n");
 		for (Person person : personList) {
 			int pageId = person.getPageid();
@@ -145,7 +159,7 @@ public class IO {
 					for (ToneCategory toneCategory : toneCategories) {
 						List<ToneScore> toneScores = toneCategory.getTones();
 						for (ToneScore toneScore : toneScores) {
-							String name = toneScore.getName();
+//							String name = toneScore.getName();
 							double score = toneScore.getScore();
 							out.write(String.valueOf(score).replace('.', ','));
 							out.write(";");
@@ -154,20 +168,44 @@ public class IO {
 
 					// List<SentenceTone> sentencesTone =
 					// ibmTone.getSentencesTone();
-					out.write(" ;");
+					out.write(";");
 
 					if (liwcTone != null) {
 						Integer wordCount = liwcTone.getLiwcScores().getWc();
-						Double tone = liwcTone.getLiwcScores().getTone();
-						Double analytic = liwcTone.getLiwcScores().getAnalytic();
-						Integer clout = liwcTone.getLiwcScores().getClout();
-						Integer authentic = liwcTone.getLiwcScores().getAuthentic();
-						Integer posEmo = liwcTone.getLiwcScores().getCategories().getPosemo();
-						Integer negEmo = liwcTone.getLiwcScores().getCategories().getNegemo();
-						out.write(wordCount + ";" + String.valueOf(tone).replace('.', ',') + ";"
-								+ String.valueOf(analytic).replace('.', ',') + ";" + clout + ";" + authentic + ";"
-								+ posEmo + ";" + negEmo + ";");
+						Double analyticalThinking = liwcTone.getLiwcScores().getAnalytic();
+						int clout = liwcTone.getLiwcScores().getClout();
+						int authentic = liwcTone.getLiwcScores().getAuthentic();
+						Double emotionalTone = liwcTone.getLiwcScores().getTone();
+						int wordsPerSentence = liwcTone.getLiwcScores().getWps();
+						int dictionaryWords = liwcTone.getLiwcScores().getDic();
 
+						int posEmo = liwcTone.getLiwcScores().getCategories().getPosemo();
+						int negEmo = liwcTone.getLiwcScores().getCategories().getNegemo();
+						int anxiety = liwcTone.getLiwcScores().getCategories().getAnx();
+						int anger = liwcTone.getLiwcScores().getCategories().getAnger();
+						int sadness = liwcTone.getLiwcScores().getCategories().getSad();
+						int tentative = liwcTone.getLiwcScores().getCategories().getTentat();
+						int certainty = liwcTone.getLiwcScores().getCategories().getCertain();
+						int power = liwcTone.getLiwcScores().getCategories().getPower();
+						int risk = liwcTone.getLiwcScores().getCategories().getRisk();
+						int death = liwcTone.getLiwcScores().getCategories().getDeath();
+
+						out.write(wordCount + ";");
+						out.write(String.valueOf(analyticalThinking).replace('.', ',') + ";");
+						out.write(clout + ";");
+						out.write(authentic + ";");
+						out.write(String.valueOf(emotionalTone).replace('.', ',') + ";");
+						out.write(dictionaryWords + ";");
+						out.write(posEmo + ";");
+						out.write(negEmo + ";");
+						out.write(anxiety + ";");
+						out.write(anger + ";");
+						out.write(sadness + ";");
+						out.write(tentative + ";");
+						out.write(certainty + ";");
+						out.write(power + ";");
+						out.write(risk + ";");
+						out.write(death + ";");
 					}
 				}
 				out.write("\n");
@@ -179,34 +217,38 @@ public class IO {
 
 	}
 
-	public void getIbmTone() {
-
+	public void getIBMTone() throws SQLException {
+		for (List<PageExtract> splitList : CommonFunctions.split(getList(), 30)) {
+			getIBMToneThreadList(splitList);
+		}
 	}
 
 	public void getLIWCTone() throws UnirestException, JSONException, SQLException {
+		for (List<PageExtract> splitList : CommonFunctions.split(getList(), 30)) {
+			getLIWCToneThreadList(splitList);
+		}
+	}
 
+	private List<PageExtract> getList() throws SQLException {
 		DbConnector db = null;
 		try {
 			db = new DbConnector();
 		} catch (ClassNotFoundException | SQLException e1) {
 			e1.printStackTrace();
 		}
+		db.executeQuery(SqlConstants.SET_MAX_CONCAT_LENGTH);
 		ResultSet pageResult = db.executeQuery(SqlConstants.PAGE_EXTRACT);
 		List<PageExtract> list = new ArrayList<>();
 		while (pageResult.next()) {
 			int pageId = pageResult.getInt("pageId");
-			String heading = pageResult.getString("heading");
 			String content = pageResult.getString("content");
-			list.add(new PageExtract(pageId, heading, content));
+			list.add(new PageExtract(pageId, content));
 
 		}
-
-		for (List<PageExtract> splitList : CommonFunctions.split(list, 30)) {
-			getLIWCToneThreaList(splitList);
-		}
+		return list;
 	}
 
-	public void getLIWCToneThreaList(final List<PageExtract> pl) {
+	public void getLIWCToneThreadList(final List<PageExtract> pl) {
 		final Receptiviti r = new Receptiviti(liwcServer, liwcApiKey, liwcApiSecretKey);
 
 		final Gson g = new Gson();
@@ -221,11 +263,42 @@ public class IO {
 						if (!content.equals("")) {
 							try {
 								ReceptivitiAnalysis a = r.analyseContent(liwcPersonId, new Content(content));
-								db.executeUpdate(SqlConstants.PAGE_EXTRACT_LIWC_TONE_UPDATE,
-										Arrays.asList(g.toJson(a), String.valueOf(p.getPageId()), p.getHeading()));
+								db.executeUpdate(SqlConstants.PAGE_LIWC_TONE_UPDATE,
+										Arrays.asList(g.toJson(a), String.valueOf(p.getPageId())));
 							} catch (UnirestException | JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+
+				}
+
+			}.start();
+		} catch (ClassNotFoundException | SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	public void getIBMToneThreadList(final List<PageExtract> pl) {
+		final Gson g = new Gson();
+		try {
+			final DbConnector db = new DbConnector();
+
+			new Thread() {
+				@Override
+				public void run() {
+					for (PageExtract p : pl) {
+						String content = p.getContent();
+						if (!content.equals("")) {
+							try {
+								ToneAnalysis a = ToneAnalyzerUtil.getInstance().getTone(content);
+
+								db.executeUpdate(SqlConstants.PAGE_IBM_TONE_UPDATE,
+										Arrays.asList(a.toString(), String.valueOf(p.getPageId())));
 							} catch (SQLException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

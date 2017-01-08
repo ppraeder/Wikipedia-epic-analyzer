@@ -1,5 +1,13 @@
+/*
+ * Created during the master thesis of
+ * 
+ * Peter Praeder - University of Cologne - praederp@smail.uni-koeln.de
+ * 
+ * Copyright 2016-2017
+ * 
+ */
 
-package com.receptiviti;
+package entity.receptiviti;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +18,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+/**
+ * 
+ * This class is part of the analysis result when calling the receptivity API
+ *
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "imaginative",
@@ -72,216 +85,216 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "happiness",
     "work_oriented"
 })
-public class Percentiles {
+public class RawScores {
 
     @JsonProperty("imaginative")
-    private Double imaginative;
+    private Integer imaginative;
     @JsonProperty("netspeak_focus")
-    private Double netspeakFocus;
+    private Integer netspeakFocus;
     @JsonProperty("humble")
-    private Double humble;
+    private Integer humble;
     @JsonProperty("liberal")
-    private Double liberal;
+    private Integer liberal;
     @JsonProperty("self_assured")
-    private Double selfAssured;
+    private Integer selfAssured;
     @JsonProperty("body_focus")
-    private Double bodyFocus;
+    private Integer bodyFocus;
     @JsonProperty("trusting")
-    private Double trusting;
+    private Integer trusting;
     @JsonProperty("organized")
-    private Double organized;
+    private Integer organized;
     @JsonProperty("melancholy")
-    private Double melancholy;
+    private Integer melancholy;
     @JsonProperty("intellectual")
     private Integer intellectual;
     @JsonProperty("cheerful")
-    private Double cheerful;
+    private Integer cheerful;
     @JsonProperty("disciplined")
-    private Double disciplined;
+    private Integer disciplined;
     @JsonProperty("neuroticism")
-    private Double neuroticism;
+    private Integer neuroticism;
     @JsonProperty("cooperative")
-    private Double cooperative;
+    private Integer cooperative;
     @JsonProperty("social_skills")
-    private Double socialSkills;
+    private Integer socialSkills;
     @JsonProperty("openness")
-    private Double openness;
+    private Integer openness;
     @JsonProperty("cold")
-    private Double cold;
+    private Integer cold;
     @JsonProperty("adjustment")
-    private Double adjustment;
+    private Integer adjustment;
     @JsonProperty("religion_oriented")
-    private Double religionOriented;
+    private Integer religionOriented;
     @JsonProperty("empathetic")
-    private Double empathetic;
+    private Integer empathetic;
     @JsonProperty("food_focus")
-    private Double foodFocus;
+    private Integer foodFocus;
     @JsonProperty("generous")
     private Integer generous;
     @JsonProperty("sexual_focus")
-    private Double sexualFocus;
+    private Integer sexualFocus;
     @JsonProperty("power_driven")
     private Integer powerDriven;
     @JsonProperty("friend_focus")
-    private Double friendFocus;
+    private Integer friendFocus;
     @JsonProperty("extraversion")
-    private Double extraversion;
+    private Integer extraversion;
     @JsonProperty("agreeableness")
-    private Double agreeableness;
+    private Integer agreeableness;
     @JsonProperty("depression")
-    private Double depression;
+    private Integer depression;
     @JsonProperty("ambitious")
-    private Double ambitious;
+    private Integer ambitious;
     @JsonProperty("health_oriented")
-    private Double healthOriented;
+    private Integer healthOriented;
     @JsonProperty("friendly")
-    private Double friendly;
+    private Integer friendly;
     @JsonProperty("artistic")
-    private Double artistic;
+    private Integer artistic;
     @JsonProperty("independent")
     private Integer independent;
     @JsonProperty("type_a")
     private Integer typeA;
     @JsonProperty("workhorse")
-    private Double workhorse;
+    private Integer workhorse;
     @JsonProperty("reward_bias")
-    private Double rewardBias;
+    private Integer rewardBias;
     @JsonProperty("energetic")
-    private Double energetic;
+    private Integer energetic;
     @JsonProperty("self_conscious")
-    private Double selfConscious;
+    private Integer selfConscious;
     @JsonProperty("assertive")
-    private Double assertive;
+    private Integer assertive;
     @JsonProperty("insecure")
-    private Double insecure;
+    private Integer insecure;
     @JsonProperty("leisure_oriented")
-    private Double leisureOriented;
+    private Integer leisureOriented;
     @JsonProperty("impulsive")
-    private Double impulsive;
+    private Integer impulsive;
     @JsonProperty("cautious")
-    private Double cautious;
+    private Integer cautious;
     @JsonProperty("conscientiousness")
-    private Double conscientiousness;
+    private Integer conscientiousness;
     @JsonProperty("active")
-    private Double active;
+    private Integer active;
     @JsonProperty("thinking_style")
-    private Double thinkingStyle;
+    private Integer thinkingStyle;
     @JsonProperty("dutiful")
-    private Double dutiful;
+    private Integer dutiful;
     @JsonProperty("genuine")
-    private Double genuine;
+    private Integer genuine;
     @JsonProperty("adventurous")
-    private Double adventurous;
+    private Integer adventurous;
     @JsonProperty("sociable")
-    private Double sociable;
+    private Integer sociable;
     @JsonProperty("family_oriented")
-    private Double familyOriented;
+    private Integer familyOriented;
     @JsonProperty("emotionally_aware")
-    private Double emotionallyAware;
+    private Integer emotionallyAware;
     @JsonProperty("persuasive")
-    private Double persuasive;
+    private Integer persuasive;
     @JsonProperty("anxious")
-    private Double anxious;
+    private Integer anxious;
     @JsonProperty("aggressive")
-    private Double aggressive;
+    private Integer aggressive;
     @JsonProperty("money_oriented")
-    private Double moneyOriented;
+    private Integer moneyOriented;
     @JsonProperty("stressed")
-    private Double stressed;
+    private Integer stressed;
     @JsonProperty("happiness")
     private Integer happiness;
     @JsonProperty("work_oriented")
-    private Double workOriented;
+    private Integer workOriented;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("imaginative")
-    public Double getImaginative() {
+    public Integer getImaginative() {
         return imaginative;
     }
 
     @JsonProperty("imaginative")
-    public void setImaginative(Double imaginative) {
+    public void setImaginative(Integer imaginative) {
         this.imaginative = imaginative;
     }
 
     @JsonProperty("netspeak_focus")
-    public Double getNetspeakFocus() {
+    public Integer getNetspeakFocus() {
         return netspeakFocus;
     }
 
     @JsonProperty("netspeak_focus")
-    public void setNetspeakFocus(Double netspeakFocus) {
+    public void setNetspeakFocus(Integer netspeakFocus) {
         this.netspeakFocus = netspeakFocus;
     }
 
     @JsonProperty("humble")
-    public Double getHumble() {
+    public Integer getHumble() {
         return humble;
     }
 
     @JsonProperty("humble")
-    public void setHumble(Double humble) {
+    public void setHumble(Integer humble) {
         this.humble = humble;
     }
 
     @JsonProperty("liberal")
-    public Double getLiberal() {
+    public Integer getLiberal() {
         return liberal;
     }
 
     @JsonProperty("liberal")
-    public void setLiberal(Double liberal) {
+    public void setLiberal(Integer liberal) {
         this.liberal = liberal;
     }
 
     @JsonProperty("self_assured")
-    public Double getSelfAssured() {
+    public Integer getSelfAssured() {
         return selfAssured;
     }
 
     @JsonProperty("self_assured")
-    public void setSelfAssured(Double selfAssured) {
+    public void setSelfAssured(Integer selfAssured) {
         this.selfAssured = selfAssured;
     }
 
     @JsonProperty("body_focus")
-    public Double getBodyFocus() {
+    public Integer getBodyFocus() {
         return bodyFocus;
     }
 
     @JsonProperty("body_focus")
-    public void setBodyFocus(Double bodyFocus) {
+    public void setBodyFocus(Integer bodyFocus) {
         this.bodyFocus = bodyFocus;
     }
 
     @JsonProperty("trusting")
-    public Double getTrusting() {
+    public Integer getTrusting() {
         return trusting;
     }
 
     @JsonProperty("trusting")
-    public void setTrusting(Double trusting) {
+    public void setTrusting(Integer trusting) {
         this.trusting = trusting;
     }
 
     @JsonProperty("organized")
-    public Double getOrganized() {
+    public Integer getOrganized() {
         return organized;
     }
 
     @JsonProperty("organized")
-    public void setOrganized(Double organized) {
+    public void setOrganized(Integer organized) {
         this.organized = organized;
     }
 
     @JsonProperty("melancholy")
-    public Double getMelancholy() {
+    public Integer getMelancholy() {
         return melancholy;
     }
 
     @JsonProperty("melancholy")
-    public void setMelancholy(Double melancholy) {
+    public void setMelancholy(Integer melancholy) {
         this.melancholy = melancholy;
     }
 
@@ -296,112 +309,112 @@ public class Percentiles {
     }
 
     @JsonProperty("cheerful")
-    public Double getCheerful() {
+    public Integer getCheerful() {
         return cheerful;
     }
 
     @JsonProperty("cheerful")
-    public void setCheerful(Double cheerful) {
+    public void setCheerful(Integer cheerful) {
         this.cheerful = cheerful;
     }
 
     @JsonProperty("disciplined")
-    public Double getDisciplined() {
+    public Integer getDisciplined() {
         return disciplined;
     }
 
     @JsonProperty("disciplined")
-    public void setDisciplined(Double disciplined) {
+    public void setDisciplined(Integer disciplined) {
         this.disciplined = disciplined;
     }
 
     @JsonProperty("neuroticism")
-    public Double getNeuroticism() {
+    public Integer getNeuroticism() {
         return neuroticism;
     }
 
     @JsonProperty("neuroticism")
-    public void setNeuroticism(Double neuroticism) {
+    public void setNeuroticism(Integer neuroticism) {
         this.neuroticism = neuroticism;
     }
 
     @JsonProperty("cooperative")
-    public Double getCooperative() {
+    public Integer getCooperative() {
         return cooperative;
     }
 
     @JsonProperty("cooperative")
-    public void setCooperative(Double cooperative) {
+    public void setCooperative(Integer cooperative) {
         this.cooperative = cooperative;
     }
 
     @JsonProperty("social_skills")
-    public Double getSocialSkills() {
+    public Integer getSocialSkills() {
         return socialSkills;
     }
 
     @JsonProperty("social_skills")
-    public void setSocialSkills(Double socialSkills) {
+    public void setSocialSkills(Integer socialSkills) {
         this.socialSkills = socialSkills;
     }
 
     @JsonProperty("openness")
-    public Double getOpenness() {
+    public Integer getOpenness() {
         return openness;
     }
 
     @JsonProperty("openness")
-    public void setOpenness(Double openness) {
+    public void setOpenness(Integer openness) {
         this.openness = openness;
     }
 
     @JsonProperty("cold")
-    public Double getCold() {
+    public Integer getCold() {
         return cold;
     }
 
     @JsonProperty("cold")
-    public void setCold(Double cold) {
+    public void setCold(Integer cold) {
         this.cold = cold;
     }
 
     @JsonProperty("adjustment")
-    public Double getAdjustment() {
+    public Integer getAdjustment() {
         return adjustment;
     }
 
     @JsonProperty("adjustment")
-    public void setAdjustment(Double adjustment) {
+    public void setAdjustment(Integer adjustment) {
         this.adjustment = adjustment;
     }
 
     @JsonProperty("religion_oriented")
-    public Double getReligionOriented() {
+    public Integer getReligionOriented() {
         return religionOriented;
     }
 
     @JsonProperty("religion_oriented")
-    public void setReligionOriented(Double religionOriented) {
+    public void setReligionOriented(Integer religionOriented) {
         this.religionOriented = religionOriented;
     }
 
     @JsonProperty("empathetic")
-    public Double getEmpathetic() {
+    public Integer getEmpathetic() {
         return empathetic;
     }
 
     @JsonProperty("empathetic")
-    public void setEmpathetic(Double empathetic) {
+    public void setEmpathetic(Integer empathetic) {
         this.empathetic = empathetic;
     }
 
     @JsonProperty("food_focus")
-    public Double getFoodFocus() {
+    public Integer getFoodFocus() {
         return foodFocus;
     }
 
     @JsonProperty("food_focus")
-    public void setFoodFocus(Double foodFocus) {
+    public void setFoodFocus(Integer foodFocus) {
         this.foodFocus = foodFocus;
     }
 
@@ -416,12 +429,12 @@ public class Percentiles {
     }
 
     @JsonProperty("sexual_focus")
-    public Double getSexualFocus() {
+    public Integer getSexualFocus() {
         return sexualFocus;
     }
 
     @JsonProperty("sexual_focus")
-    public void setSexualFocus(Double sexualFocus) {
+    public void setSexualFocus(Integer sexualFocus) {
         this.sexualFocus = sexualFocus;
     }
 
@@ -436,82 +449,82 @@ public class Percentiles {
     }
 
     @JsonProperty("friend_focus")
-    public Double getFriendFocus() {
+    public Integer getFriendFocus() {
         return friendFocus;
     }
 
     @JsonProperty("friend_focus")
-    public void setFriendFocus(Double friendFocus) {
+    public void setFriendFocus(Integer friendFocus) {
         this.friendFocus = friendFocus;
     }
 
     @JsonProperty("extraversion")
-    public Double getExtraversion() {
+    public Integer getExtraversion() {
         return extraversion;
     }
 
     @JsonProperty("extraversion")
-    public void setExtraversion(Double extraversion) {
+    public void setExtraversion(Integer extraversion) {
         this.extraversion = extraversion;
     }
 
     @JsonProperty("agreeableness")
-    public Double getAgreeableness() {
+    public Integer getAgreeableness() {
         return agreeableness;
     }
 
     @JsonProperty("agreeableness")
-    public void setAgreeableness(Double agreeableness) {
+    public void setAgreeableness(Integer agreeableness) {
         this.agreeableness = agreeableness;
     }
 
     @JsonProperty("depression")
-    public Double getDepression() {
+    public Integer getDepression() {
         return depression;
     }
 
     @JsonProperty("depression")
-    public void setDepression(Double depression) {
+    public void setDepression(Integer depression) {
         this.depression = depression;
     }
 
     @JsonProperty("ambitious")
-    public Double getAmbitious() {
+    public Integer getAmbitious() {
         return ambitious;
     }
 
     @JsonProperty("ambitious")
-    public void setAmbitious(Double ambitious) {
+    public void setAmbitious(Integer ambitious) {
         this.ambitious = ambitious;
     }
 
     @JsonProperty("health_oriented")
-    public Double getHealthOriented() {
+    public Integer getHealthOriented() {
         return healthOriented;
     }
 
     @JsonProperty("health_oriented")
-    public void setHealthOriented(Double healthOriented) {
+    public void setHealthOriented(Integer healthOriented) {
         this.healthOriented = healthOriented;
     }
 
     @JsonProperty("friendly")
-    public Double getFriendly() {
+    public Integer getFriendly() {
         return friendly;
     }
 
     @JsonProperty("friendly")
-    public void setFriendly(Double friendly) {
+    public void setFriendly(Integer friendly) {
         this.friendly = friendly;
     }
 
     @JsonProperty("artistic")
-    public Double getArtistic() {
+    public Integer getArtistic() {
         return artistic;
     }
 
     @JsonProperty("artistic")
-    public void setArtistic(Double artistic) {
+    public void setArtistic(Integer artistic) {
         this.artistic = artistic;
     }
 
@@ -536,232 +549,232 @@ public class Percentiles {
     }
 
     @JsonProperty("workhorse")
-    public Double getWorkhorse() {
+    public Integer getWorkhorse() {
         return workhorse;
     }
 
     @JsonProperty("workhorse")
-    public void setWorkhorse(Double workhorse) {
+    public void setWorkhorse(Integer workhorse) {
         this.workhorse = workhorse;
     }
 
     @JsonProperty("reward_bias")
-    public Double getRewardBias() {
+    public Integer getRewardBias() {
         return rewardBias;
     }
 
     @JsonProperty("reward_bias")
-    public void setRewardBias(Double rewardBias) {
+    public void setRewardBias(Integer rewardBias) {
         this.rewardBias = rewardBias;
     }
 
     @JsonProperty("energetic")
-    public Double getEnergetic() {
+    public Integer getEnergetic() {
         return energetic;
     }
 
     @JsonProperty("energetic")
-    public void setEnergetic(Double energetic) {
+    public void setEnergetic(Integer energetic) {
         this.energetic = energetic;
     }
 
     @JsonProperty("self_conscious")
-    public Double getSelfConscious() {
+    public Integer getSelfConscious() {
         return selfConscious;
     }
 
     @JsonProperty("self_conscious")
-    public void setSelfConscious(Double selfConscious) {
+    public void setSelfConscious(Integer selfConscious) {
         this.selfConscious = selfConscious;
     }
 
     @JsonProperty("assertive")
-    public Double getAssertive() {
+    public Integer getAssertive() {
         return assertive;
     }
 
     @JsonProperty("assertive")
-    public void setAssertive(Double assertive) {
+    public void setAssertive(Integer assertive) {
         this.assertive = assertive;
     }
 
     @JsonProperty("insecure")
-    public Double getInsecure() {
+    public Integer getInsecure() {
         return insecure;
     }
 
     @JsonProperty("insecure")
-    public void setInsecure(Double insecure) {
+    public void setInsecure(Integer insecure) {
         this.insecure = insecure;
     }
 
     @JsonProperty("leisure_oriented")
-    public Double getLeisureOriented() {
+    public Integer getLeisureOriented() {
         return leisureOriented;
     }
 
     @JsonProperty("leisure_oriented")
-    public void setLeisureOriented(Double leisureOriented) {
+    public void setLeisureOriented(Integer leisureOriented) {
         this.leisureOriented = leisureOriented;
     }
 
     @JsonProperty("impulsive")
-    public Double getImpulsive() {
+    public Integer getImpulsive() {
         return impulsive;
     }
 
     @JsonProperty("impulsive")
-    public void setImpulsive(Double impulsive) {
+    public void setImpulsive(Integer impulsive) {
         this.impulsive = impulsive;
     }
 
     @JsonProperty("cautious")
-    public Double getCautious() {
+    public Integer getCautious() {
         return cautious;
     }
 
     @JsonProperty("cautious")
-    public void setCautious(Double cautious) {
+    public void setCautious(Integer cautious) {
         this.cautious = cautious;
     }
 
     @JsonProperty("conscientiousness")
-    public Double getConscientiousness() {
+    public Integer getConscientiousness() {
         return conscientiousness;
     }
 
     @JsonProperty("conscientiousness")
-    public void setConscientiousness(Double conscientiousness) {
+    public void setConscientiousness(Integer conscientiousness) {
         this.conscientiousness = conscientiousness;
     }
 
     @JsonProperty("active")
-    public Double getActive() {
+    public Integer getActive() {
         return active;
     }
 
     @JsonProperty("active")
-    public void setActive(Double active) {
+    public void setActive(Integer active) {
         this.active = active;
     }
 
     @JsonProperty("thinking_style")
-    public Double getThinkingStyle() {
+    public Integer getThinkingStyle() {
         return thinkingStyle;
     }
 
     @JsonProperty("thinking_style")
-    public void setThinkingStyle(Double thinkingStyle) {
+    public void setThinkingStyle(Integer thinkingStyle) {
         this.thinkingStyle = thinkingStyle;
     }
 
     @JsonProperty("dutiful")
-    public Double getDutiful() {
+    public Integer getDutiful() {
         return dutiful;
     }
 
     @JsonProperty("dutiful")
-    public void setDutiful(Double dutiful) {
+    public void setDutiful(Integer dutiful) {
         this.dutiful = dutiful;
     }
 
     @JsonProperty("genuine")
-    public Double getGenuine() {
+    public Integer getGenuine() {
         return genuine;
     }
 
     @JsonProperty("genuine")
-    public void setGenuine(Double genuine) {
+    public void setGenuine(Integer genuine) {
         this.genuine = genuine;
     }
 
     @JsonProperty("adventurous")
-    public Double getAdventurous() {
+    public Integer getAdventurous() {
         return adventurous;
     }
 
     @JsonProperty("adventurous")
-    public void setAdventurous(Double adventurous) {
+    public void setAdventurous(Integer adventurous) {
         this.adventurous = adventurous;
     }
 
     @JsonProperty("sociable")
-    public Double getSociable() {
+    public Integer getSociable() {
         return sociable;
     }
 
     @JsonProperty("sociable")
-    public void setSociable(Double sociable) {
+    public void setSociable(Integer sociable) {
         this.sociable = sociable;
     }
 
     @JsonProperty("family_oriented")
-    public Double getFamilyOriented() {
+    public Integer getFamilyOriented() {
         return familyOriented;
     }
 
     @JsonProperty("family_oriented")
-    public void setFamilyOriented(Double familyOriented) {
+    public void setFamilyOriented(Integer familyOriented) {
         this.familyOriented = familyOriented;
     }
 
     @JsonProperty("emotionally_aware")
-    public Double getEmotionallyAware() {
+    public Integer getEmotionallyAware() {
         return emotionallyAware;
     }
 
     @JsonProperty("emotionally_aware")
-    public void setEmotionallyAware(Double emotionallyAware) {
+    public void setEmotionallyAware(Integer emotionallyAware) {
         this.emotionallyAware = emotionallyAware;
     }
 
     @JsonProperty("persuasive")
-    public Double getPersuasive() {
+    public Integer getPersuasive() {
         return persuasive;
     }
 
     @JsonProperty("persuasive")
-    public void setPersuasive(Double persuasive) {
+    public void setPersuasive(Integer persuasive) {
         this.persuasive = persuasive;
     }
 
     @JsonProperty("anxious")
-    public Double getAnxious() {
+    public Integer getAnxious() {
         return anxious;
     }
 
     @JsonProperty("anxious")
-    public void setAnxious(Double anxious) {
+    public void setAnxious(Integer anxious) {
         this.anxious = anxious;
     }
 
     @JsonProperty("aggressive")
-    public Double getAggressive() {
+    public Integer getAggressive() {
         return aggressive;
     }
 
     @JsonProperty("aggressive")
-    public void setAggressive(Double aggressive) {
+    public void setAggressive(Integer aggressive) {
         this.aggressive = aggressive;
     }
 
     @JsonProperty("money_oriented")
-    public Double getMoneyOriented() {
+    public Integer getMoneyOriented() {
         return moneyOriented;
     }
 
     @JsonProperty("money_oriented")
-    public void setMoneyOriented(Double moneyOriented) {
+    public void setMoneyOriented(Integer moneyOriented) {
         this.moneyOriented = moneyOriented;
     }
 
     @JsonProperty("stressed")
-    public Double getStressed() {
+    public Integer getStressed() {
         return stressed;
     }
 
     @JsonProperty("stressed")
-    public void setStressed(Double stressed) {
+    public void setStressed(Integer stressed) {
         this.stressed = stressed;
     }
 
@@ -776,12 +789,12 @@ public class Percentiles {
     }
 
     @JsonProperty("work_oriented")
-    public Double getWorkOriented() {
+    public Integer getWorkOriented() {
         return workOriented;
     }
 
     @JsonProperty("work_oriented")
-    public void setWorkOriented(Double workOriented) {
+    public void setWorkOriented(Integer workOriented) {
         this.workOriented = workOriented;
     }
 

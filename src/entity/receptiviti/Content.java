@@ -1,10 +1,23 @@
-package com.receptiviti.samples.personality;
+/*
+ * Created during the master thesis of
+ * 
+ * Peter Praeder - University of Cologne - praederp@smail.uni-koeln.de
+ * 
+ * Copyright 2016-2017
+ * 
+ */
+package entity.receptiviti;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * This class contains the parameters which are submitted in a call to the API of receptivity (Pennebaker)
+ * 
+ * See https://app.receptiviti.com/v2/api/spec for further information on how to use this in an API call
+ */
 public class Content {
 	@JsonIgnore
 	public String id;
