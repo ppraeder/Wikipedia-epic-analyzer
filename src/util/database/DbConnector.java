@@ -130,15 +130,15 @@ public class DbConnector {
 	 *            used language
 	 * 
 	 */
-	public void executeBatchPageRankUpdate(String query, int[] parameterPageId, float[] parameterPageRank, String lang)
-			throws SQLException {
+	public void executeBatchPageRankUpdate(String query, float[] parameterPageRank, int[] parameterPageId,
+			int[] parameterCharacterId) throws SQLException {
 		con.setAutoCommit(false);
 		PreparedStatement pstmt = con.prepareStatement(query);
 
 		for (int i = 0; i < parameterPageId.length; i++) {
 			pstmt.setInt(2, parameterPageId[i]);
 			pstmt.setFloat(1, parameterPageRank[i]);
-			pstmt.setString(3, lang);
+			pstmt.setInt(3, parameterCharacterId[i]);
 			pstmt.addBatch();
 		}
 		pstmt.executeBatch();

@@ -404,7 +404,6 @@ public class MainGui {
 	public void runPerformed() throws ClassNotFoundException, SQLException {
 		IO io = new IO();
 		if (pageButton.isSelected()) {
-
 			if (categoryTextField.getText() == null) {
 				new Thread() {
 					@Override

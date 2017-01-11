@@ -22,6 +22,7 @@ import java.net.URLConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -795,6 +796,292 @@ public class IO {
 
 			}
 		}.start();
+	}
+
+	/**
+	 * a constant for Pagerank calculation
+	 */
+	private final float D = 0.85f;
+
+	/**
+	 * a SQL query for updating page rank for a specific page id.
+	 */
+	private String updatePageRankQuery = "UPDATE characters SET pagerank=? WHERE pageid=? AND characterId=?";
+	/**
+	 * a SQL query for getting the biggest value of a page id.
+	 */
+	private String MaxPageidQuery = "SELECT MAX(characterId) AS characterId FROM characters WHERE pageId=?";
+	/**
+	 * a SQL query for getting the total number of all page entities.
+	 */
+	private String pageCountQuery = "SELECT COUNT(*) as characters FROM characters WHERE pageId=?";
+	/**
+	 * a SQL query for getting all page ids and corresponding page ranks.
+	 */
+	private String pagerankPageidQuery = "SELECT characterId,pagerank FROM characters WHERE pageId=?";
+	/**
+	 * a SQL query for getting all connections between a specific page id and
+	 * other page ids.
+	 */
+	private String connectionsQuery = "SELECT fromPageId, toPageId FROM connection Where fromPageId=";
+	/**
+	 * a SQL query for getting the number of all connections from a specific
+	 * page id
+	 */
+	private String totalConnectionsQuery = "SELECT Count(*) AS connectionSum, fromPageId as fromPageId FROM connection WHERE toPageId IN (SELECT characterId FROM characters WHERE pageId=?) AND fromPageId IN (SELECT characterId FROM characters WHERE pageId=?) GROUP BY fromPageId";
+
+	/**
+	 * a SQL query for getting an outdegree value of a specific pageid.
+	 */
+	private String outdegreeQuery = "SELECT outdegree,characterId FROM characters WHERE pageId=?";
+
+	public void setPagerank() {
+		new Thread() {
+			@Override
+			public void run() {
+
+				DbConnector db = null;
+				try {
+					db = new DbConnector();
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				ResultSet r = null;
+				try {
+					r = db.executeQuery(SqlConstants.GET_PAGES_WITH_CHARACTERS);
+					while (r.next()) {
+						String pageId = r.getString("pageId");
+						computePagerank(pageId);
+					}
+					System.out.println("Successfully calculated pagerank.");
+				} catch (SQLException e) {
+					System.out.println("Problem while calculating pagerank.");
+					e.printStackTrace();
+				}
+				try {
+					db.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}.start();
+
+	}
+
+	private void computePagerank(String epicPageId) {
+
+		ResultSet pageid = null;
+		ResultSet pageCount = null;
+		ResultSet outdegree = null;
+		DbConnector db = null;
+		float[] pageRank = null;
+		int[] pagerankid; // store pageIds here. Array is a collection of
+							// pageIds. With this it is simplier to access all
+							// pageIds
+		int[][] connectionsArray = null;
+
+		float outdegreeCount[] = null; // a variable needed for calculations
+		int n = 0; // a constant for a number of pages; appears in calculations
+					// of pagerank
+		try {
+			db = new DbConnector();
+		} catch (ClassNotFoundException e1) {
+
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+
+			e1.printStackTrace();
+		}
+		// get Max, PageId, how many pages in total and outdegree for each page
+		// Then use pageid to initialize the pagerank array
+		try {
+			pageid = db.executeQuery(MaxPageidQuery, Arrays.asList(epicPageId));
+			pageCount = db.executeQuery(pageCountQuery, Arrays.asList(epicPageId));
+			outdegree = db.executeQuery(outdegreeQuery, Arrays.asList(epicPageId));
+			while (pageid.next()) {
+				connectionsArray = new int[pageid.getInt("characterId") + 1][];
+				pageRank = new float[pageid.getInt("characterId") + 1];
+				outdegreeCount = new float[pageRank.length];
+			}
+			// get pages counted
+			if (pageCount.next()) {
+				n = pageCount.getInt("characters");
+			}
+			// get outdegrees of each page
+			while (outdegree.next()) {
+				// a division by D is done here instead of multiplication step
+				// in the updatePagerank Method, which is done for optimization
+				// purposes.
+				outdegreeCount[outdegree.getInt("characterId")] = ((long) outdegree.getInt("outdegree") / D);
+
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+		pagerankid = new int[n];
+		try {
+			ResultSet connections = null;
+			connections = db.executeQuery(totalConnectionsQuery, Arrays.asList(epicPageId, epicPageId));
+			while (connections.next()) {
+
+				connectionsArray[connections.getInt("fromPageId")] = new int[connections.getInt("connectionSum")];
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+		try {
+			pageid = db.executeQuery(pagerankPageidQuery, Arrays.asList(epicPageId));
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+
+		// initialize PageRank with value 1
+		// and other variables for each pageid
+
+		try {
+			int pagerankidIndex = 0;
+			while (pageid.next()) {
+				pagerankid[pagerankidIndex] = pageid.getInt("characterId");
+				pageRank[pagerankid[pagerankidIndex]] = 1f;
+				pagerankidIndex++;
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		// initialize connections
+		pageid = null;
+		pageCount = null;
+		outdegree = null;
+
+		// initialize a value only if the corresponding pageid exists
+		try {
+
+			// create temp array for last indexes of each Pagerank
+			int[] connectionsArrayCursor = new int[connectionsArray.length];
+
+			ResultSet connections = null;
+			for (int pagerankidIndex = 0; pagerankidIndex < pagerankid.length; pagerankidIndex++) {
+				Statement st = db.getStatement();
+				connections = st.executeQuery((connectionsQuery + pagerankid[pagerankidIndex]));
+				while (connections.next()) {
+
+					connectionsArray[pagerankid[pagerankidIndex]][connectionsArrayCursor[pagerankid[pagerankidIndex]]] = connections
+							.getInt("topageid");
+					connectionsArrayCursor[pagerankid[pagerankidIndex]]++;
+				}
+				connections = null;
+				st.close();
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		pageRank = updatePageRank(pageRank, connectionsArray, n, outdegreeCount);
+		// save the actual pagerank to the database
+		try {
+			int batchArrayIndex = 0;
+			int[] parameterPageId = new int[300000];
+			int[] parameterCharacterId = new int[300000];
+			float[] parameterPageRank = new float[300000];
+
+			for (int pageRankIdIndex = 0; pageRankIdIndex < pagerankid.length; pageRankIdIndex++) {
+				parameterPageId[batchArrayIndex] = pagerankid[pageRankIdIndex];
+				parameterCharacterId[batchArrayIndex] = pagerankid[pageRankIdIndex];
+				parameterPageRank[batchArrayIndex] = pageRank[pagerankid[pageRankIdIndex]];
+				batchArrayIndex++;
+				if (batchArrayIndex == 300000) {
+					db.executeBatchPageRankUpdate(updatePageRankQuery, parameterPageRank, parameterPageId,
+							parameterCharacterId);
+					batchArrayIndex = 0;
+				}
+			}
+			if (batchArrayIndex > 0) {
+				db.executeBatchPageRankUpdate(updatePageRankQuery, parameterPageRank, parameterPageId,
+						parameterCharacterId);
+				batchArrayIndex = 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			db.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	/**
+	 * The method is used to only compute pagerank after all pre-work is being
+	 * done. That means all necessary data is loaded from a database and is
+	 * initialized as objects. The computation is done according to the
+	 * recursive formula taken from Wikipedia. The implementation is done as an
+	 * iterative process in order to mind errors occurring due to continuous
+	 * recursion. Further the memory consumption and computation speed are taken
+	 * into the consideration. One iteration consists of 3 steps: 1. calculate
+	 * the sum of incoming page rank quotes for each page. 2. Add the constant
+	 * (1-d). 3. Determine whether the difference to the previous result is
+	 * significant, i.d. bigger than 0.00002.
+	 * 
+	 * @param pageRank
+	 *            an array of pagerank values, where each index is a page id.
+	 *            The last index is the maximum page id value and the 0-index is
+	 *            not used.
+	 * @param connectionsArray
+	 *            For each page id an array of connections to other page id is
+	 *            stored here. The connection definition is used according to
+	 *            the page rank calculation. The first index is page id. The
+	 *            second index is the index of a connection. Each array cell
+	 *            contains the destination page id.
+	 * @param n
+	 *            total number of pages.
+	 * @param outdegreeCount
+	 *            outdegree of each page id. The index of the array is a page
+	 *            id.
+	 * @return calculated array pageranks for each page id. The index is a page
+	 *         id .
+	 */
+	public float[] updatePageRank(float[] pageRank, int[][] connectionsArray, int n, float[] outdegreeCount) {
+		float prconst = (float) ((1d - D));
+		boolean noChange = true;
+		float[] pageRankTmp = new float[pageRank.length];
+		do {
+			noChange = true;
+			// initiate sum operation of the pagerank
+			for (int fromPageidIndex = 0; fromPageidIndex < connectionsArray.length; fromPageidIndex++) {
+				if (connectionsArray[fromPageidIndex] != null)
+					for (int toPageidIndex = 0; toPageidIndex < connectionsArray[fromPageidIndex].length; toPageidIndex++) {
+						pageRankTmp[connectionsArray[fromPageidIndex][toPageidIndex]] = pageRankTmp[connectionsArray[fromPageidIndex][toPageidIndex]]
+								+ (pageRank[fromPageidIndex] / outdegreeCount[fromPageidIndex]);
+					}
+			}
+			for (int i = 1; i < pageRankTmp.length; i++) {
+				pageRankTmp[i] = prconst + pageRankTmp[i];
+				if (noChange && (pageRank[i] - pageRankTmp[i] > 0.00002f)
+						|| (pageRank[i] - pageRankTmp[i] < -0.00002f)) {
+					noChange = false;
+				}
+
+			}
+			for (int i = 0; i < pageRank.length; i++) {
+				pageRank[i] = pageRankTmp[i];
+				pageRankTmp[i] = 0f;
+			}
+		} while (!noChange);
+		return pageRank;
 	}
 
 }
