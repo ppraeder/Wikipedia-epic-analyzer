@@ -36,11 +36,15 @@ public class ApiCaller {
 
 	/** The Gson for several purposes */
 	Gson g = new Gson();
+	
+	/** The path. */
+	private String path;
 
 	/**
 	 * Boolean watchDogFinished
 	 */
 	protected boolean watchDogFinished;
+	
 
 	/**
 	 * Instantiates a new api caller.
@@ -51,7 +55,7 @@ public class ApiCaller {
 	 *            the category title list
 	 */
 	public ApiCaller(String path, List<String> categoryTitleList) {
-		this.path = path;
+		this.setPath(path);
 
 		for (String title : categoryTitleList) {
 			Category c = new Category(title);
@@ -153,5 +157,19 @@ public class ApiCaller {
 			}
 		}
 
+	}
+
+	/**
+	 * @return the path
+	 */
+	public String getPath() {
+		return path;
+	}
+
+	/**
+	 * @param path the path to set
+	 */
+	public void setPath(String path) {
+		this.path = path;
 	}
 }

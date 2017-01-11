@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
@@ -127,9 +129,16 @@ public class IO {
 	 * public static void openWebpage(URL url) { try { openWebpage(url.toURI());
 	 * } catch (URISyntaxException e) { e.printStackTrace(); } }
 	 */
+
+	/**
+	 * Retrieves the links of the Template section in wikipedia pages.
+	 * 
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws SQLException
+	 */
 	public void getLinksFromWikipediaTemplate() throws IOException, JSONException, SQLException {
 		List<Page> pages = this.getExtractsFromDatabase();
-
 		for (List<Page> splitList : CommonFunctions.split(pages, 10)) {
 			// new Thread() {
 			// @Override
@@ -147,6 +156,15 @@ public class IO {
 		}
 	}
 
+	/**
+	 * Calls the characters and retreive outgoing links from them. If the link
+	 * is also in our character list. A connection between the characters is
+	 * persisted
+	 * 
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws SQLException
+	 */
 	public void getLinksFromWikipediaConnection() throws IOException, JSONException, SQLException {
 		List<Page> pages = this.getCharactersFromDatabase();
 		for (Page p : pages) {
@@ -169,6 +187,18 @@ public class IO {
 		}
 	}
 
+	/**
+	 * Processes the HTML result of a call from a wikipedia page. The wikipedia
+	 * API only generates all links for a page so we have to manually select
+	 * links in a relevant area. These are the templates or the page excluding
+	 * the template.
+	 * 
+	 * @param page
+	 * @param fromTemplate
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws SQLException
+	 */
 	private void getLinksFromWikipedia(Page page, boolean fromTemplate)
 			throws IOException, JSONException, SQLException {
 
@@ -210,6 +240,15 @@ public class IO {
 
 	}
 
+	/**
+	 * Get links from an element of the page
+	 * 
+	 * @param page
+	 * @param content
+	 * @param withConnection
+	 * @throws JSONException
+	 * @throws SQLException
+	 */
 	private void getLinks(Page page, Element content, boolean withConnection) throws JSONException, SQLException {
 		String pageTitle = page.getTitle();
 		String pageId = String.valueOf(page.getPageId());
@@ -218,7 +257,13 @@ public class IO {
 		for (Iterator<Element> iterator = links.iterator(); iterator.hasNext();) {
 			Element element = iterator.next();
 			String link = element.attr("href");
+			/**
+			 * It has to be an internal wikipedia link
+			 */
 			if (link.startsWith("/wiki/")) {
+				/**
+				 * Ignore unrelevant links
+				 */
 				if (link.startsWith("/wiki/Category:") || link.startsWith("/wiki/Special:")
 						|| link.startsWith("/wiki/Wikipedia:") || link.startsWith("/wiki/Help:")
 						|| link.startsWith("/wiki/Template:") || link.startsWith("/wiki/Portal:")
@@ -243,6 +288,13 @@ public class IO {
 		}
 	}
 
+	/**
+	 * Persist the connection between to characters to the database
+	 * 
+	 * @param parentPageId
+	 * @param character
+	 * @throws SQLException
+	 */
 	private void persistConnection(String parentPageId, Page character) throws SQLException {
 		try {
 			final DbConnector db = new DbConnector();
@@ -264,6 +316,13 @@ public class IO {
 		}
 	}
 
+	/**
+	 * Persist the character to the database.
+	 * 
+	 * @param parentPageId
+	 * @param character
+	 * @throws SQLException
+	 */
 	private void persistCharacter(String parentPageId, Page character) throws SQLException {
 		try {
 			final DbConnector db = new DbConnector();
@@ -281,6 +340,12 @@ public class IO {
 		}
 	}
 
+	/**
+	 * Retreive the characters from the database
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	public List<Page> getExtractsFromDatabase() throws SQLException {
 		DbConnector db = null;
 		try {
@@ -308,27 +373,19 @@ public class IO {
 			page.setEarliestYear(earliestYear);
 			page.setLatestYear(latestYear);
 			ResultSet rs = db.executeQuery(SqlConstants.PAGE_EXTRACT_GET, Arrays.asList(String.valueOf(pageId)));
-			// List<PageExtract> peList = new ArrayList<>();
-			// while (rs.next()) {
-			// String heading = rs.getString("heading");
-			// String content = rs.getString("content");
-			// ToneAnalysis ibmTone = gson.fromJson(rs.getString("ibmTone"),
-			// ToneAnalysis.class);
-			// ReceptivitiAnalysis liwcTone =
-			// gson.fromJson(rs.getString("liwcTone"),
-			// ReceptivitiAnalysis.class);
-			// PageExtract pe = new PageExtract(heading, content);
-			// pe.setLiwcTone(liwcTone);
-			// peList.add(pe);
-			// }
 			rs.close();
-			// p.setPageExtracts(peList);
 			pageList.add(page);
 		}
 		pageResult.close();
 		return pageList;
 	}
 
+	/**
+	 * Retreive the characters from the database
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	public List<Page> getCharactersFromDatabase() throws SQLException {
 		DbConnector db = null;
 		try {
@@ -372,11 +429,6 @@ public class IO {
 		for (Page page : this.getExtractsFromDatabase()) {
 			int pageId = page.getPageId();
 			String title = page.getTitle();
-			// for (PageExtract pageExtract : person.getPageExtracts()) {
-			// String heading = pageExtract.getHeading();
-			// String content =
-			// StringEscapeUtils.escapeJava(pageExtract.getContent().replaceAll(";",
-			// "|"));
 			ToneAnalysis ibmTone = page.getIbmTone();
 			ReceptivitiAnalysis liwcTone = page.getLiwcTone();
 			DocumentSentiment docSentiment = page.getDocumentSentiment();
@@ -402,8 +454,6 @@ public class IO {
 					}
 				}
 
-				// List<SentenceTone> sentencesTone =
-				// ibmTone.getSentencesTone();
 				out.write(";");
 
 				if (liwcTone != null) {
@@ -453,32 +503,51 @@ public class IO {
 				}
 				out.write("\n");
 			}
-
-			// }
-
 		}
 		out.close();
+		System.out.println("Export finished.");
 
 	}
 
+	/**
+	 * Get the Watson ToneAnalyser Tone
+	 * 
+	 * @throws SQLException
+	 */
 	public void getIBMTone() throws SQLException {
 		for (List<PageExtract> splitList : CommonFunctions.split(getList(), 30)) {
 			getIBMToneThreadList(splitList);
 		}
 	}
 
+	/**
+	 * Get the Watson AlchemyLanguage Tone
+	 * 
+	 * @throws SQLException
+	 */
 	public void getAlchemyTone() throws SQLException {
 		for (List<PageExtract> splitList : CommonFunctions.split(getList(), 30)) {
 			getDocumentSentimentThreadList(splitList);
 		}
 	}
 
+	/**
+	 * Get the Receptivity LIWC Tone
+	 * 
+	 * @throws SQLException
+	 */
 	public void getLIWCTone() throws UnirestException, JSONException, SQLException {
 		for (List<PageExtract> splitList : CommonFunctions.split(getList(), 30)) {
 			getLIWCToneThreadList(splitList);
 		}
 	}
 
+	/**
+	 * Gets the list of Extract from the database
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	private List<PageExtract> getList() throws SQLException {
 		DbConnector db = null;
 		try {
@@ -658,6 +727,7 @@ public class IO {
 		new Thread() {
 			@Override
 			public void run() {
+
 				DbConnector db = null;
 				try {
 					db = new DbConnector();
@@ -712,7 +782,9 @@ public class IO {
 						}
 
 					}
+					System.out.println("Successfully calculated degree.");
 				} catch (SQLException e) {
+					System.out.println("Problem while calculating degree.");
 					e.printStackTrace();
 				}
 				try {

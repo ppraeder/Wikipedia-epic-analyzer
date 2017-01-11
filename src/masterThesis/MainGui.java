@@ -51,9 +51,14 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.json.JSONException;
+
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 import entity.Page;
 import util.ApiCaller;
 import util.IO;
+import java.awt.FlowLayout;
 
 /**
  * The main GUI class which has all crawler windows other than data base
@@ -64,30 +69,30 @@ import util.IO;
 public class MainGui {
 
 	private static final String LAST_USED_FOLDER = "LAST_USED_FOLDER";
-	private JFrame frmWikitimemachineCrawlerV;
+	private JFrame wikiToneForm;
 	private String path;
 	private List<String> category;
 	protected String category2;
-	private JButton btnSaveAs;
-	private JFormattedTextField formattedTextField;
-	private JTextArea formattedTextField_1;
-	private JButton btnNewButton;
-	private JLabel lblCategory;
-	private JRadioButton rdbtnCrawl;
-	private JPanel panel;
+	private JButton saveButton;
+	private JFormattedTextField pathTextField;
+	private JTextArea categoryTextField;
+	private JButton runButton;
+	private JLabel categoryLabel;
+	private JRadioButton pageButton;
+	private JPanel optionsPanel;
 	private ButtonGroup bg;
-	private JRadioButton rdbtnLoad;
+	private JRadioButton characterButton;
 	private JMenuBar menuBar;
 	private JMenu mnHelp;
 	private JMenu mnFile;
-	private JPanel panel_1;
-	private JRadioButton rdbtnStorePersons;
-	private JComboBox<?> langComboBox;
-	private JRadioButton rdbtnDetermineDates;
+	private JPanel savePanel;
+	private JRadioButton networkButton;
+	private JComboBox<?> languageSelect;
+	private JRadioButton exportButton;
 	private List<Page> pList;
-	private JRadioButton rdbtnStoreCategories;
-	private JRadioButton rdbtnStoreConnections;
-	private JRadioButton rdbtnComputePagerank;
+	private JRadioButton liwcButton;
+	private JRadioButton toneButton;
+	private JRadioButton alchemyButton;
 	private JMenuItem mntmDatabase;
 
 	/**
@@ -105,7 +110,7 @@ public class MainGui {
 						e.printStackTrace();
 					}
 					MainGui window = new MainGui();
-					window.frmWikitimemachineCrawlerV.setVisible(true);
+					window.wikiToneForm.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -131,71 +136,75 @@ public class MainGui {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmWikitimemachineCrawlerV = new JFrame();
-		frmWikitimemachineCrawlerV.setTitle("Wiki Tone Analyzer v.0.5");
-		frmWikitimemachineCrawlerV.setBounds(100, 100, 519, 300);
-		frmWikitimemachineCrawlerV.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		panel_1 = new JPanel();
-		panel_1.setBounds(8, 5, 264, 33);
-		frmWikitimemachineCrawlerV.getContentPane().add(panel_1);
-		btnSaveAs = new JButton("Save as...");
-		panel_1.add(btnSaveAs);
-		formattedTextField = new JFormattedTextField();
-		formattedTextField.setColumns(20);
-		panel_1.add(formattedTextField);
+		wikiToneForm = new JFrame();
+		wikiToneForm.setTitle("Wiki Tone Analyzer v.0.5");
+		wikiToneForm.setBounds(100, 100, 519, 339);
+		wikiToneForm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		savePanel = new JPanel();
+		savePanel.setBounds(8, 5, 264, 33);
+		wikiToneForm.getContentPane().add(savePanel);
+		saveButton = new JButton("Save as...");
+		savePanel.add(saveButton);
+		pathTextField = new JFormattedTextField();
+		pathTextField.setColumns(20);
+		savePanel.add(pathTextField);
+		savePanel.setVisible(false);
 
 		bg = new ButtonGroup();
 
-		panel = new JPanel();
-		panel.setBounds(277, 5, 216, 159);
-		frmWikitimemachineCrawlerV.getContentPane().add(panel);
+		optionsPanel = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) optionsPanel.getLayout();
+		flowLayout.setVgap(8);
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		optionsPanel.setBounds(277, 5, 171, 229);
+		wikiToneForm.getContentPane().add(optionsPanel);
 
-		rdbtnCrawl = new JRadioButton("Crawl");
+		pageButton = new JRadioButton("Collect Pages");
 
-		rdbtnCrawl.setSelected(true);
-		panel.add(rdbtnCrawl);
-		bg.add(rdbtnCrawl);
+		pageButton.setSelected(true);
+		optionsPanel.add(pageButton);
+		bg.add(pageButton);
 
-		rdbtnLoad = new JRadioButton("Load File to Memory");
-		panel.add(rdbtnLoad);
-		bg.add(rdbtnLoad);
+		characterButton = new JRadioButton("Collect Characters");
+		optionsPanel.add(characterButton);
+		bg.add(characterButton);
 
-		rdbtnStorePersons = new JRadioButton("Store Persons");
-		panel.add(rdbtnStorePersons);
-		bg.add(rdbtnStorePersons);
+		networkButton = new JRadioButton("Calculate Network Metrics");
+		optionsPanel.add(networkButton);
+		bg.add(networkButton);
 
-		rdbtnStoreCategories = new JRadioButton("Store Categories");
-		panel.add(rdbtnStoreCategories);
-		bg.add(rdbtnStoreCategories);
-		rdbtnStoreConnections = new JRadioButton("Store Connections");
-		panel.add(rdbtnStoreConnections);
-		bg.add(rdbtnStoreConnections);
-		rdbtnComputePagerank = new JRadioButton("Compute Pagerank");
-		panel.add(rdbtnComputePagerank);
-		bg.add(rdbtnComputePagerank);
-		rdbtnDetermineDates = new JRadioButton("Determine Dates");
-		panel.add(rdbtnDetermineDates);
-		bg.add(rdbtnDetermineDates);
-		btnNewButton = new JButton("Run");
+		liwcButton = new JRadioButton("Calculate LIWC");
+		optionsPanel.add(liwcButton);
+		bg.add(liwcButton);
+		toneButton = new JRadioButton("Calculate Watson Tone");
+		optionsPanel.add(toneButton);
+		bg.add(toneButton);
+		alchemyButton = new JRadioButton("Calculate Watson Alchemy");
+		optionsPanel.add(alchemyButton);
+		bg.add(alchemyButton);
+		exportButton = new JRadioButton("Export as CSV");
+		optionsPanel.add(exportButton);
+		bg.add(exportButton);
+		runButton = new JButton("Run");
 
-		btnNewButton.setBounds(8, 206, 485, 23);
-		frmWikitimemachineCrawlerV.getContentPane().add(btnNewButton);
+		runButton.setBounds(10, 245, 485, 23);
+		wikiToneForm.getContentPane().add(runButton);
 
-		formattedTextField_1 = new JTextArea();
-		formattedTextField_1.setRows(5);
-		formattedTextField_1.setBounds(101, 42, 171, 94);
-		frmWikitimemachineCrawlerV.getContentPane().add(formattedTextField_1);
+		categoryTextField = new JTextArea();
+		categoryTextField.setRows(5);
+		categoryTextField.setBounds(101, 42, 171, 161);
+		wikiToneForm.getContentPane().add(categoryTextField);
 
-		lblCategory = new JLabel("Categories");
-		lblCategory.setBounds(18, 45, 79, 14);
-		frmWikitimemachineCrawlerV.getContentPane().add(lblCategory);
+		categoryLabel = new JLabel("Categories");
+		categoryLabel.setBounds(18, 45, 79, 14);
+		wikiToneForm.getContentPane().add(categoryLabel);
 
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void addMenu() {
 		menuBar = new JMenuBar();
-		frmWikitimemachineCrawlerV.setJMenuBar(menuBar);
+		wikiToneForm.setJMenuBar(menuBar);
 		mnFile = new JMenu("Settings");
 		menuBar.add(mnFile);
 
@@ -250,10 +259,8 @@ public class MainGui {
 								Window win = SwingUtilities.getWindowAncestor(ep);
 								win.setVisible(false);
 							} catch (IOException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							} catch (URISyntaxException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 						}
@@ -273,12 +280,12 @@ public class MainGui {
 			}
 		});
 		menuBar.add(mnHelp);
-		frmWikitimemachineCrawlerV.getContentPane().setLayout(null);
+		wikiToneForm.getContentPane().setLayout(null);
 
-		langComboBox = new JComboBox();
-		langComboBox.setModel(new DefaultComboBoxModel(new String[] { "EN" }));
-		langComboBox.setBounds(101, 147, 166, 20);
-		frmWikitimemachineCrawlerV.getContentPane().add(langComboBox);
+		languageSelect = new JComboBox();
+		languageSelect.setModel(new DefaultComboBoxModel(new String[] { "EN" }));
+		languageSelect.setBounds(106, 214, 166, 20);
+		wikiToneForm.getContentPane().add(languageSelect);
 	}
 
 	ItemListener listener = new ItemListener() {
@@ -293,50 +300,40 @@ public class MainGui {
 
 	};
 
+	/**
+	 * Add action listeners to the buttons to show only relevant interaction
+	 * objects
+	 */
 	public void addActionListeners() {
-		rdbtnCrawl.addItemListener(new ItemListener() {
-
+		exportButton.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				boolean visibility = true;
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					btnSaveAs.setText("Save as...");
-					lblCategory.setVisible(true);
-					visibility = true;
-					btnSaveAs.setVisible(true);
-					formattedTextField.setVisible(true);
-
-				} else {
-
-				}
-				formattedTextField_1.setVisible(visibility);
-				lblCategory.setVisible(visibility);
+				categoryLabel.setVisible(false);
+				savePanel.setVisible(true);
+				categoryTextField.setVisible(false);
+				categoryLabel.setVisible(false);
+				languageSelect.setVisible(false);
 
 			}
 		});
-		rdbtnLoad.addItemListener(new ItemListener() {
-
+		pageButton.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				boolean visibility = true;
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					btnSaveAs.setText("Open...");
-					visibility = false;
-					btnSaveAs.setVisible(true);
-					formattedTextField.setVisible(true);
-				}
-				formattedTextField_1.setVisible(visibility);
-				lblCategory.setVisible(visibility);
+				categoryLabel.setVisible(true);
+				categoryTextField.setVisible(true);
+				categoryLabel.setVisible(true);
+				savePanel.setVisible(false);
+				languageSelect.setVisible(true);
 
 			}
 		});
-		rdbtnStorePersons.addItemListener(listener);
-		rdbtnStoreCategories.addItemListener(listener);
-		rdbtnStoreConnections.addItemListener(listener);
-		rdbtnComputePagerank.addItemListener(listener);
-		rdbtnDetermineDates.addItemListener(listener);
+		characterButton.addItemListener(listener);
+		networkButton.addItemListener(listener);
+		liwcButton.addItemListener(listener);
+		toneButton.addItemListener(listener);
+		alchemyButton.addItemListener(listener);
 
-		btnNewButton.addActionListener(new ActionListener() {
+		runButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -344,30 +341,24 @@ public class MainGui {
 				try {
 					runPerformed();
 				} catch (ClassNotFoundException | SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
 			}
 		});
-		btnSaveAs.addActionListener(new ActionListener() {
+		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (rdbtnCrawl.isSelected()) {
-					openOrSave(true);
-				} else {
-					openOrSave(false);
-				}
-
+				openOrSave(false);
 			}
 		});
 	}
 
 	private void setInvisible() {
-		btnSaveAs.setVisible(false);
-		formattedTextField.setVisible(false);
-		formattedTextField_1.setVisible(false);
-		lblCategory.setVisible(false);
+		savePanel.setVisible(false);
+		categoryTextField.setVisible(false);
+		categoryLabel.setVisible(false);
+		languageSelect.setVisible(false);
 	}
 
 	boolean openOrSave(boolean save) {
@@ -383,7 +374,7 @@ public class MainGui {
 		chooser = new JFileChooser(prefs.get(LAST_USED_FOLDER, new File(".").getAbsolutePath()));
 		chooser.setDialogType(save ? JFileChooser.SAVE_DIALOG : JFileChooser.OPEN_DIALOG);
 
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON FILES", "json");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Comma Separated (.csv)", "csv");
 
 		chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
 
@@ -391,7 +382,7 @@ public class MainGui {
 		chooser.setDialogTitle(save ? "Save as..." : "Open...");
 		chooser.setVisible(true);
 
-		int result = chooser.showSaveDialog(frmWikitimemachineCrawlerV);
+		int result = chooser.showSaveDialog(wikiToneForm);
 
 		if (result == JFileChooser.APPROVE_OPTION) {
 
@@ -402,7 +393,7 @@ public class MainGui {
 			}
 			prefs.put(LAST_USED_FOLDER, file.getParent());
 			chooser.setVisible(false);
-			formattedTextField.setText(path);
+			pathTextField.setText(path);
 			return true;
 		}
 		chooser.setVisible(false);
@@ -411,14 +402,25 @@ public class MainGui {
 	}
 
 	public void runPerformed() throws ClassNotFoundException, SQLException {
-		if (rdbtnCrawl.isSelected()) {
-			if (path == null) {
+		IO io = new IO();
+		if (pageButton.isSelected()) {
+
+			if (categoryTextField.getText() == null) {
+				new Thread() {
+					@Override
+					public void run() {
+						JOptionPane.showMessageDialog(null, "No category entered.");
+					}
+				}.start();
 				return;
 			}
-			if (formattedTextField_1.getText() == null) {
-				return;
-			}
-			category = Arrays.asList(formattedTextField_1.getText().split("\n"));
+			new Thread() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Collect pages.");
+				}
+			}.start();
+			category = Arrays.asList(categoryTextField.getText().split("\n"));
 			ApiCaller api;
 			try {
 				api = new ApiCaller(path, category);
@@ -429,48 +431,67 @@ public class MainGui {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (rdbtnLoad.isSelected()) {
-			if (path == null) {
-				return;
-			}
-			frmWikitimemachineCrawlerV.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			IO io = new IO();
-			pList = null;
+		} else if (characterButton.isSelected()) {
+			new Thread() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Collect characters and links.");
+				}
+			}.start();
 			try {
-				pList = io.readFromJsonFile(path);
-			} catch (FileNotFoundException e) {
+				io.getLinksFromWikipediaTemplate();
+				io.getLinksFromWikipediaConnection();
+			} catch (IOException | JSONException e) {
 				e.printStackTrace();
 			}
-			frmWikitimemachineCrawlerV.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			JOptionPane.showOptionDialog(null, "All persons loaded.", "Done!", JOptionPane.OK_OPTION,
-					JOptionPane.INFORMATION_MESSAGE, null, new String[] { "OK" }, "OK");
-
-			// } else if (rdbtnStorePersons.isSelected()) {
-			// sq.store(pList, StoreMethods.Pages,
-			// langComboBox.getSelectedItem().toString());
-			// } else if (rdbtnStoreCategories.isSelected()) {
-			// sq.store(pList, StoreMethods.Categories,
-			// langComboBox.getSelectedItem().toString());
-			// } else if (rdbtnStoreConnections.isSelected()) {
-			// sq.store(pList, StoreMethods.Connections,
-			// langComboBox.getSelectedItem().toString());
-			// } else if (rdbtnComputePagerank.isSelected()) {
-			// sq.computePagerank(langComboBox.getSelectedItem().toString());
-		} else if (rdbtnDetermineDates.isSelected()) {
-			// new Thread(new Runnable() {
-			// @Override
-			// public void run() {
-			// SqlUtil sq = new SqlUtil();
-			// try {
-			// sq.determineDates(langComboBox.getSelectedItem().toString());
-			// } catch (ClassNotFoundException e) {
-			// e.printStackTrace();
-			// } catch (SQLException e) {
-			// e.printStackTrace();
-			// }
-			// }
-			// }).start();
-
+		} else if (networkButton.isSelected()) {
+			new Thread() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Generate degree.");
+				}
+			}.start();
+			io.setDegree();
+		} else if (toneButton.isSelected()) {
+			new Thread() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Collect ToneAnalyzer tone.");
+				}
+			}.start();
+			io.getIBMTone();
+		} else if (liwcButton.isSelected()) {
+			new Thread() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Collect liwc tone.");
+				}
+			}.start();
+			try {
+				io.getLIWCTone();
+			} catch (UnirestException | JSONException e) {
+				e.printStackTrace();
+			}
+		} else if (alchemyButton.isSelected()) {
+			new Thread() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Collect alchemy tone.");
+				}
+			}.start();
+			io.getAlchemyTone();
+		} else if (exportButton.isSelected()) {
+			new Thread() {
+				@Override
+				public void run() {
+					JOptionPane.showMessageDialog(null, "Export started.");
+				}
+			}.start();
+			try {
+				io.writeToCSV(pathTextField.getText());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			System.out.println("Nothing defined");
 		}
