@@ -18,53 +18,89 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
- * This class is part of the analysis result when calling the receptivity API
- *
+ * This class is part of the analysis result when calling the receptivity API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "description",
-    "summary"
-})
+@JsonPropertyOrder({ "description", "summary" })
 public class PersonalitySnapshot {
 
-    @JsonProperty("description")
-    private String description;
-    @JsonProperty("summary")
-    private String summary;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	/** The description. */
+	@JsonProperty("description")
+	private String description;
 
-    @JsonProperty("description")
-    public String getDescription() {
-        return description;
-    }
+	/** The summary. */
+	@JsonProperty("summary")
+	private String summary;
 
-    @JsonProperty("description")
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	/** The additional properties. */
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("summary")
-    public String getSummary() {
-        return summary;
-    }
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
+	@JsonProperty("description")
+	public String getDescription() {
+		return description;
+	}
 
-    @JsonProperty("summary")
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
+	/**
+	 * Sets the description.
+	 *
+	 * @param description
+	 *            the new description
+	 */
+	@JsonProperty("description")
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+	/**
+	 * Gets the summary.
+	 *
+	 * @return the summary
+	 */
+	@JsonProperty("summary")
+	public String getSummary() {
+		return summary;
+	}
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+	/**
+	 * Sets the summary.
+	 *
+	 * @param summary
+	 *            the new summary
+	 */
+	@JsonProperty("summary")
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	/**
+	 * Gets the additional properties.
+	 *
+	 * @return the additional properties
+	 */
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	/**
+	 * Sets the additional property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
 
 }

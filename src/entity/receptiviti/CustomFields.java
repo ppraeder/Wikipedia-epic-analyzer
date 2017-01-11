@@ -17,10 +17,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
- * This class is part of the analysis result when calling the receptivity API
- *
+ * This class is part of the analysis result when calling the receptivity API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -28,17 +27,31 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 public class CustomFields {
 
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	/** The additional properties. */
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+	/**
+	 * Gets the additional properties.
+	 *
+	 * @return the additional properties
+	 */
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+	/**
+	 * Sets the additional property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
 
 }

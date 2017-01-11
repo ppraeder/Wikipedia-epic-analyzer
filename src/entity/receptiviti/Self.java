@@ -18,53 +18,89 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
- * This class is part of the analysis result when calling the receptivity API
- *
+ * This class is part of the analysis result when calling the receptivity API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "href",
-    "method"
-})
+@JsonPropertyOrder({ "href", "method" })
 public class Self {
 
-    @JsonProperty("href")
-    private String href;
-    @JsonProperty("method")
-    private String method;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	/** The href. */
+	@JsonProperty("href")
+	private String href;
 
-    @JsonProperty("href")
-    public String getHref() {
-        return href;
-    }
+	/** The method. */
+	@JsonProperty("method")
+	private String method;
 
-    @JsonProperty("href")
-    public void setHref(String href) {
-        this.href = href;
-    }
+	/** The additional properties. */
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("method")
-    public String getMethod() {
-        return method;
-    }
+	/**
+	 * Gets the href.
+	 *
+	 * @return the href
+	 */
+	@JsonProperty("href")
+	public String getHref() {
+		return href;
+	}
 
-    @JsonProperty("method")
-    public void setMethod(String method) {
-        this.method = method;
-    }
+	/**
+	 * Sets the href.
+	 *
+	 * @param href
+	 *            the new href
+	 */
+	@JsonProperty("href")
+	public void setHref(String href) {
+		this.href = href;
+	}
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+	/**
+	 * Gets the method.
+	 *
+	 * @return the method
+	 */
+	@JsonProperty("method")
+	public String getMethod() {
+		return method;
+	}
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+	/**
+	 * Sets the method.
+	 *
+	 * @param method
+	 *            the new method
+	 */
+	@JsonProperty("method")
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	/**
+	 * Gets the additional properties.
+	 *
+	 * @return the additional properties
+	 */
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	/**
+	 * Sets the additional property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
 
 }

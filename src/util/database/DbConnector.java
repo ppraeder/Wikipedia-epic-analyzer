@@ -19,13 +19,14 @@ import java.util.List;
 /**
  * 
  *
- * The class is an interface between the database and the crawler. An object of this class is used to access the database. 
+ * The class is an interface between the database and the crawler. An object of
+ * this class is used to access the database.
  *
  */
 public class DbConnector {
-/**
- * database name from settings class
- */
+	/**
+	 * database name from settings class
+	 */
 	private String db = DbConnectionStrings.getInstance().getDb();
 	/**
 	 * database port from settings class
@@ -62,23 +63,30 @@ public class DbConnector {
 
 	/**
 	 * The method is used when initializing a database connection
+	 * 
 	 * @return a database connection
-	  */
+	 */
 	private Connection getDbConnection() throws SQLException, ClassNotFoundException {
-//		Class.forName("com.mysql.jdbc.Driver");
-		return DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + db+"?serverTimezone=UTC&useSSL=false", dbUsr, dbPwd);
+		// Class.forName("com.mysql.jdbc.Driver");
+		return DriverManager.getConnection(
+				"jdbc:mysql://" + host + ":" + port + "/" + db + "?serverTimezone=UTC&useSSL=false", dbUsr, dbPwd);
 	}
-/**
- * The method constructs a DBConnector object and initializes a database connection
- */
+
+	/**
+	 * The method constructs a DBConnector object and initializes a database
+	 * connection
+	 */
 	public DbConnector() throws ClassNotFoundException, SQLException {
 		con = this.getDbConnection();
 	}
 
 	/**
-	 * The method executes a SQL update query on database 
-	 * @param statement used statement
-	 * @param parameters parameters of the statement
+	 * The method executes a SQL update query on database
+	 * 
+	 * @param statement
+	 *            used statement
+	 * @param parameters
+	 *            parameters of the statement
 	 *
 	 */
 	public void executeUpdate(String statement, List<String> parameters) throws SQLException {
@@ -94,42 +102,56 @@ public class DbConnector {
 		}
 		prepStmt.executeUpdate();
 	}
-/**
- * The method is used to execute a query without variable parameters
- * @param query a query to execute
- * 
- */
+
+	/**
+	 * The method is used to execute a query without variable parameters
+	 * 
+	 * @param query
+	 *            a query to execute
+	 * 
+	 */
 	public void executeUpdate(String query) throws SQLException {
 		st = con.createStatement();
 		st.executeUpdate(query);
 	}
 
 	/**
-	 * The method is used when updating multiple rows of a database at one time and thus decreasing the processing time
-	 * @param query a query to execute
-	 * @param parameterPageId An array of page ids which should be updated
-	 * @param parameterPageRank An array of page rank values which should be written to the corresponding page ids
-	 * @param lang used language
+	 * The method is used when updating multiple rows of a database at one time
+	 * and thus decreasing the processing time
+	 * 
+	 * @param query
+	 *            a query to execute
+	 * @param parameterPageId
+	 *            An array of page ids which should be updated
+	 * @param parameterPageRank
+	 *            An array of page rank values which should be written to the
+	 *            corresponding page ids
+	 * @param lang
+	 *            used language
 	 * 
 	 */
-	public void executeBatchPageRankUpdate(String query,int[] parameterPageId, float[] parameterPageRank, String lang) throws SQLException {
+	public void executeBatchPageRankUpdate(String query, int[] parameterPageId, float[] parameterPageRank, String lang)
+			throws SQLException {
 		con.setAutoCommit(false);
 		PreparedStatement pstmt = con.prepareStatement(query);
-		
-			for (int i = 0;i<parameterPageId.length;i++) {
-				pstmt.setInt(2, parameterPageId[i]);
-				pstmt.setFloat(1, parameterPageRank[i]);
-				pstmt.setString(3, lang);
-				pstmt.addBatch();
-			}
-			pstmt.executeBatch();
 
-		
+		for (int i = 0; i < parameterPageId.length; i++) {
+			pstmt.setInt(2, parameterPageId[i]);
+			pstmt.setFloat(1, parameterPageRank[i]);
+			pstmt.setString(3, lang);
+			pstmt.addBatch();
+		}
+		pstmt.executeBatch();
+
 	}
+
 	/**
 	 * The method is used when accessing specific rows of a database
-	 * @param statement a statement to execute
-	 * @param parameters parameters of the statement
+	 * 
+	 * @param statement
+	 *            a statement to execute
+	 * @param parameters
+	 *            parameters of the statement
 	 * @return a result set of the query
 	 * 
 	 */
@@ -148,22 +170,28 @@ public class DbConnector {
 
 		return rs;
 	}
-/**
- * The method is used to execute a query without variable parameters
- * @param statement a statement to execute
- * @return a result set of the statement
- * 
- */
+
+	/**
+	 * The method is used to execute a query without variable parameters
+	 * 
+	 * @param statement
+	 *            a statement to execute
+	 * @return a result set of the statement
+	 * 
+	 */
 	public ResultSet executeQuery(String statement) throws SQLException {
 		return executeQuery(statement, null);
 	}
 
 	/**
-	 * The method returns a statement, which can be used to execute a query on a database. The method is used in some cases to dramatically reduce memory consumption. 
+	 * The method returns a statement, which can be used to execute a query on a
+	 * database. The method is used in some cases to dramatically reduce memory
+	 * consumption.
+	 * 
 	 * @return A statement.
 	 */
 	public Statement getStatement() {
-		
+
 		try {
 			return con.createStatement();
 		} catch (SQLException e) {
@@ -171,9 +199,12 @@ public class DbConnector {
 			return null;
 		}
 	}
+
 	/**
 	 * The method closes a result set.
-	 * @param rs a result set.
+	 * 
+	 * @param rs
+	 *            a result set.
 	 * 
 	 */
 	public void close(ResultSet rs) throws SQLException {
@@ -181,10 +212,12 @@ public class DbConnector {
 			rs.close();
 		}
 	}
-/**
- * The method closes a connection, a result set, a statement and a prepared statement .
- * 
- */
+
+	/**
+	 * The method closes a connection, a result set, a statement and a prepared
+	 * statement .
+	 * 
+	 */
 	public void close() throws SQLException {
 		if (con != null && !con.isClosed()) {
 			con.close();
@@ -200,21 +233,27 @@ public class DbConnector {
 		}
 
 	}
-/**
- * The method closes a statement
- * @param st a statement to close
- * 
- */
+
+	/**
+	 * The method closes a statement
+	 * 
+	 * @param st
+	 *            a statement to close
+	 * 
+	 */
 	public void close(Statement st) throws SQLException {
 		if (!st.isClosed()) {
 			st.close();
 		}
 	}
-/**
- * The method closes a connection
- * @param con a connection to close
- * 
- */
+
+	/**
+	 * The method closes a connection
+	 * 
+	 * @param con
+	 *            a connection to close
+	 * 
+	 */
 	public void close(Connection con) throws SQLException {
 		if (!con.isClosed()) {
 			con.close();

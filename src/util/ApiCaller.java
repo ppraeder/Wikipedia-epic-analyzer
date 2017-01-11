@@ -8,26 +8,22 @@
  */
 package util;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.google.gson.Gson;
 
 import entity.Category;
-import entity.Person;
+import entity.Page;
 
 /**
  * The Class ApiCaller.
  */
 public class ApiCaller {
 
-	/** The person list. */
-	List<Person> personList;
+	/** The Page list. */
+	List<Page> pageList;
 
 	/** The category list. */
 	List<Category> categoryList = new ArrayList<>();
@@ -38,15 +34,13 @@ public class ApiCaller {
 	/** The clean links finished. */
 	List<Boolean> cleanLinksFinished = new ArrayList<>();
 
-	/** The g. */
+	/** The Gson for several purposes */
 	Gson g = new Gson();
 
-	/** The path. */
-	private String path;
-
+	/**
+	 * Boolean watchDogFinished
+	 */
 	protected boolean watchDogFinished;
-
-	private int splitListSize = 0;
 
 	/**
 	 * Instantiates a new api caller.
@@ -66,205 +60,79 @@ public class ApiCaller {
 	}
 
 	/**
-	 * This function compare the outgoing links to all known persons. If link is
-	 * not "known" reference is deleted
-	 */
-	public void cleanLinks(final List<Person> pl) {
-		new Thread() {
-
-			@Override
-			public void run() {
-				for (Person p : pl) {
-					while (p.getLinkList() == null) {
-						try {
-							Thread.sleep(1);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-					// Iterate over all links for this page
-					for (Iterator<Person> linkIterator = p.getLinkList().iterator(); linkIterator.hasNext();) {
-						Person link = linkIterator.next();
-						boolean isPeople = false;
-						// Check if link is in our person list
-						for (Person person : personList) {
-							// Link is a Person we know
-							if (person.getTitle().equals(link.getTitle())) {
-								isPeople = true;
-								link.setPageid(person.getPageid());
-								break;
-							}
-						}
-						if (isPeople) {
-							// TODO: Connect People
-							isPeople = false;
-						} else {
-							linkIterator.remove();
-						}
-					}
-				}
-
-				cleanLinksFinished.add(true);
-
-			}
-		}.start();
-	}
-	
-	
-
-	/**
-	 * Gets the categories.
-	 *
-	 * @param pl
-	 *            Part of the whole personList
-	 * @param ca
-	 *            A new CategoryApi for every task
-	 * @return All categories to which a person belong
-	 */
-	public void getCategories(final List<Person> pl, final CategoryApi ca) {
-		new Thread() {
-			@Override
-			public void run() {
-				for (Person p : pl) {
-					try {
-						ca.getCategories(p);
-					} catch (Exception e1) {
-
-						e1.printStackTrace();
-					}
-				}
-
-			}
-
-		}.start();
-	}
-
-	public void getCategoriesLinksAndClean(int listSplit) {
-		for (List<Person> list : CommonFunctions.split(personList, listSplit)) {
-			splitListSize++;
-			// getCategories(list, new CategoryApi());
-			getLinks(list, new LinkApi());
-			// cleanLinks(list);
-		}
-	}
-
-	/**
-	 * Gets the links.
-	 *
-	 * @param pl
-	 *            Part of the whole personList
-	 * @param la
-	 *            A new LinkApi for every task
-	 * @return Outgoing links to each person
-	 */
-	public void getLinks(final List<Person> pl, final LinkApi la) {
-		new Thread() {
-			@Override
-			public void run() {
-				for (Person p : pl) {
-					try {
-						la.getOutgoingLinks(p);
-					} catch (Exception e1) {
-
-						e1.printStackTrace();
-					}
-				}
-
-			}
-		}.start();
-	}
-
-	/**
-	 * Start.
+	 * Start. This method fetches the pages from the categories in an
+	 * asynchronous task
 	 *
 	 * @throws Exception
 	 *             the exception
 	 */
 	public void start() throws Exception {
 		startWatchDog(5);
-		personList = new ArrayList<Person>();
+		pageList = new ArrayList<Page>();
 
 		for (final Category c : categoryList) {
-			 new Thread() {
-			 @Override
-			 public void run() {
-			CategoryApi ca = new CategoryApi();
+			new Thread() {
+				@Override
+				public void run() {
+					CategoryApi ca = new CategoryApi();
 
-			try {
-				Thread.sleep(200);
-				List<Person> tempList = ca.getCategoryMembers(c);
-				
-				for (Person person : tempList) {
-					person.groupExtract();
-					for (String key : person.getExtractMap().keySet()) {
-						LinkedHashMap<String, String> textMap = person.getExtractMap().get(key);
-						String fullText = "";
-						for (String textMapKey : textMap.keySet()) {
-							fullText += textMap.get(textMapKey);
+					try {
+						Thread.sleep(200);
+						List<Page> tempList = ca.getCategoryMembers(c);
+
+						for (Page Page : tempList) {
+							Page.groupExtract();
+							for (String key : Page.getExtractMap().keySet()) {
+								LinkedHashMap<String, String> textMap = Page.getExtractMap().get(key);
+								String fullText = "";
+								for (String textMapKey : textMap.keySet()) {
+									fullText += textMap.get(textMapKey);
+								}
+								if (fullText.length() != 0) {
+									// Page.getToneMap().put(key,
+									// ToneAnalyzerUtil.getInstance().getTone(fullText));
+								}
+							}
+
 						}
-						if (fullText.length() != 0) {
-							// person.getToneMap().put(key,
-							// ToneAnalyzerUtil.getInstance().getTone(fullText));
-						}
+						pageList.addAll(tempList);
+						categoryFinishedList.add(true);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-
+					System.out.println("Category '" + c.getTitle() + "' done");
+					CommonFunctions.printCurrentTimestamp();
 				}
-				personList.addAll(tempList);
-				categoryFinishedList.add(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			System.out.println("Category '" + c.getTitle() + "' done");
-			CommonFunctions.printCurrentTimestamp();
+			}.start();
 		}
-		 }.start();
-		 }
 
 		waitForCategoryMembers();
-		// List<String> titleList = new ArrayList<>();
-		// for (Person person : personList) {
-		// LinkedHashMap<String, LinkedHashMap<String, String>> map =
-		// person.getExtractMap();
-		// List<String> list = Arrays.asList("References", "Sources", "Notes",
-		// "Bibliography", "See also",
-		// "External links", "Translations and adaptations");
-		// for (String string : map.keySet()) {
-		// if (list.contains(string)) {
-		// break;
-		// }
-		// if (!titleList.contains(string)) {
-		// titleList.add(string);
-		// }
-		// }
-		//
-		// }
-		// runs async
-		// getCategoriesLinksAndClean(10);
-
-		// waitForCleanedLinks();
-
 		watchDogFinished = true;
 		System.out.println("Finally done");
 		CommonFunctions.printCurrentTimestamp();
 
 	}
 
+	/**
+	 * Starts a watch dog for long running threads to give the user a feedback
+	 * via console output
+	 * 
+	 * @param sleepTime
+	 */
 	public void startWatchDog(int sleepTime) {
 		new Thread() {
 			@Override
 			public void run() {
 				while (!watchDogFinished) {
-					// System.out.println("WatchDog: Still Alive");
-					// CommonFunctions.printCurrentTimestamp();
 					try {
 						Thread.sleep(sleepTime * 1000);
+						System.out.println("WatchDog: Running");
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 				IO io = new IO();
-				io.writeToDatabase(personList);
+				io.writeToDatabase(pageList);
 				System.out.println("WatchDog: Finished");
 				CommonFunctions.printCurrentTimestamp();
 			}
@@ -285,16 +153,5 @@ public class ApiCaller {
 			}
 		}
 
-	}
-
-	private void waitForCleanedLinks() {
-		while (cleanLinksFinished.size() != splitListSize) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				System.out.println("Wait for cleaned links error:");
-				e.printStackTrace();
-			}
-		}
 	}
 }

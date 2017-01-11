@@ -10,6 +10,7 @@ package util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -19,9 +20,8 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import entity.Person;
+import entity.Page;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PageApi.
  */
@@ -34,6 +34,7 @@ public class PageApi {
 	private List<String> apContinueList;
 
 	private String contentQuery = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&explaintext&pageids=";
+	private String infoQuery = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=info&titles=";
 
 	/**
 	 * Gets the page info.
@@ -44,16 +45,16 @@ public class PageApi {
 	 * @throws JSONException
 	 *             the JSON exception
 	 */
-	public List<Person> getPageInfo(JSONObject json) throws JSONException {
+	public List<Page> getPageInfo(JSONObject json) throws JSONException {
 		if (!json.has("query")) {
 			return null;
 		}
 		JSONArray jsonArray = CommonFunctions.getSubJSON(json, "query").getJSONArray("allpages");
 
-		List<Person> returnList = new ArrayList<Person>();
+		List<Page> returnList = new ArrayList<Page>();
 		for (int i = 0; i < jsonArray.length(); i++) {
 			Gson gson = new Gson();
-			Person p = gson.fromJson(jsonArray.getJSONObject(i).toString(), Person.class);
+			Page p = gson.fromJson(jsonArray.getJSONObject(i).toString(), Page.class);
 
 			returnList.add(p);
 		}
@@ -70,31 +71,30 @@ public class PageApi {
 	 * @throws JSONException
 	 *             the JSON exception
 	 */
-	public List<Person> getPageInfoFromCategoryList(JSONObject json) throws JSONException {
+	public List<Page> getPageInfoFromCategoryList(JSONObject json) throws JSONException {
 		if (!json.has("query")) {
 			return null;
 		}
 		JSONArray jsonArray = CommonFunctions.getSubJSON(json, "query").getJSONArray("categorymembers");
 
 		Gson gson = new Gson();
-		List<Person> returnList = gson.fromJson(jsonArray.toString(), new TypeToken<List<Person>>() {
+		List<Page> returnList = gson.fromJson(jsonArray.toString(), new TypeToken<List<Page>>() {
 		}.getType());
 		HttpUtil h = new HttpUtil();
-		for (Person person : returnList) {
-			int pageId = person.getPageid();
+		for (Page person : returnList) {
+			int pageId = person.getPageId();
 			String result = null;
 			try {
 				result = h.sendGet(contentQuery + pageId);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			json = CommonFunctions.getJSON(result);
 			Object strippedJson = ((JSONObject) ((JSONObject) json.get("query")).get("pages"))
 					.get(String.valueOf(pageId));
-			Person p = gson.fromJson(strippedJson.toString(), new TypeToken<Person>() {
+			Page p = gson.fromJson(strippedJson.toString(), new TypeToken<Page>() {
 			}.getType());
-			if (p.getPageid() == pageId) {
+			if (p.getPageId() == pageId) {
 				person.setExtract(p.getExtract());
 			}
 
@@ -113,20 +113,19 @@ public class PageApi {
 	 * @throws JSONException
 	 *             the JSON exception
 	 */
-	public List<Person> getPageInfoFromLinkList(JSONObject json, Person page) throws JSONException {
+	public List<Page> getPageInfoFromLinkList(JSONObject json, Page page) throws JSONException {
 		if (!json.has("query")) {
 			return null;
 		}
 
 		JSONObject j = CommonFunctions.getSubJSON(json, "query").getJSONObject("pages")
-				.getJSONObject(String.valueOf(page.getPageid()));
-		if(!j.has("links"))
-		{
-			return new ArrayList<Person>();
+				.getJSONObject(String.valueOf(page.getPageId()));
+		if (!j.has("links")) {
+			return new ArrayList<Page>();
 		}
 		JSONArray jsonArray = j.getJSONArray("links");
 		Gson gson = new Gson();
-		List<Person> returnList = gson.fromJson(jsonArray.toString(), new TypeToken<List<Person>>() {
+		List<Page> returnList = gson.fromJson(jsonArray.toString(), new TypeToken<List<Page>>() {
 		}.getType());
 
 		return returnList;
@@ -151,5 +150,31 @@ public class PageApi {
 		apContinueList.add(apcontinue);
 
 		return true;
+	}
+
+	public Page getPageInfoForTitle(String pageTitle) throws JSONException {
+		Gson gson = new Gson();
+
+		HttpUtil h = new HttpUtil();
+		String result = null;
+		try {
+			result = h.sendGet(infoQuery + pageTitle);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		JSONObject json = CommonFunctions.getJSON(result);
+		JSONObject strippedJson = ((JSONObject) ((JSONObject) json.get("query")).get("pages"));
+		Iterator<?> keys = strippedJson.keys();
+		Page p = null;
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			if (strippedJson.get(key) instanceof JSONObject) {
+				Object o = strippedJson.get(key);
+				p = gson.fromJson(o.toString(), new TypeToken<Page>() {
+				}.getType());
+			}
+		}
+
+		return p;
 	}
 }

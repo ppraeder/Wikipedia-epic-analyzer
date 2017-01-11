@@ -17,219 +17,439 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
- * This class is part of the analysis result when calling the receptivity API
- *
+ * This class is part of the analysis result when calling the receptivity API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReceptivitiAnalysis {
 
-    @JsonProperty("_id")
-    private String id;
-    @JsonProperty("created")
-    private String created;
-    @JsonProperty("updated")
-    private String updated;
-    @JsonProperty("custom_fields")
-    private CustomFields customFields;
-    @JsonProperty("content_source")
-    private Integer contentSource;
-    @JsonProperty("liwc_scores")
-    private LiwcScores liwcScores;
-    @JsonProperty("content_date")
-    private String contentDate;
-    @JsonProperty("content_tags")
-    private List<Object> contentTags = null;
-    @JsonProperty("user")
-    private String user;
-    @JsonProperty("language")
-    private String language;
-    @JsonProperty("person")
-    private String person;
-    @JsonProperty("communication_recommendation")
-    private String communicationRecommendation;
-    @JsonProperty("receptiviti_scores")
-    private ReceptivitiScores receptivitiScores;
-    @JsonProperty("personality_snapshot")
-    private List<PersonalitySnapshot> personalitySnapshot = null;
-    @JsonProperty("emotional_analysis")
-    private EmotionalAnalysis emotionalAnalysis;
-    @JsonProperty("_links")
-    private Links links;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	/** The id. */
+	@JsonProperty("_id")
+	private String id;
 
-    @JsonProperty("_id")
-    public String getId() {
-        return id;
-    }
+	/** The created. */
+	@JsonProperty("created")
+	private String created;
 
-    @JsonProperty("_id")
-    public void setId(String id) {
-        this.id = id;
-    }
+	/** The updated. */
+	@JsonProperty("updated")
+	private String updated;
 
-    @JsonProperty("created")
-    public String getCreated() {
-        return created;
-    }
+	/** The custom fields. */
+	@JsonProperty("custom_fields")
+	private CustomFields customFields;
 
-    @JsonProperty("created")
-    public void setCreated(String created) {
-        this.created = created;
-    }
+	/** The content source. */
+	@JsonProperty("content_source")
+	private Integer contentSource;
 
-    @JsonProperty("updated")
-    public String getUpdated() {
-        return updated;
-    }
+	/** The liwc scores. */
+	@JsonProperty("liwc_scores")
+	private LiwcScores liwcScores;
 
-    @JsonProperty("updated")
-    public void setUpdated(String updated) {
-        this.updated = updated;
-    }
+	/** The content date. */
+	@JsonProperty("content_date")
+	private String contentDate;
 
-    @JsonProperty("custom_fields")
-    public CustomFields getCustomFields() {
-        return customFields;
-    }
+	/** The content tags. */
+	@JsonProperty("content_tags")
+	private List<Object> contentTags = null;
 
-    @JsonProperty("custom_fields")
-    public void setCustomFields(CustomFields customFields) {
-        this.customFields = customFields;
-    }
+	/** The user. */
+	@JsonProperty("user")
+	private String user;
 
-    @JsonProperty("content_source")
-    public Integer getContentSource() {
-        return contentSource;
-    }
+	/** The language. */
+	@JsonProperty("language")
+	private String language;
 
-    @JsonProperty("content_source")
-    public void setContentSource(Integer contentSource) {
-        this.contentSource = contentSource;
-    }
+	/** The person. */
+	@JsonProperty("person")
+	private String person;
 
-    @JsonProperty("liwc_scores")
-    public LiwcScores getLiwcScores() {
-        return liwcScores;
-    }
+	/** The communication recommendation. */
+	@JsonProperty("communication_recommendation")
+	private String communicationRecommendation;
 
-    @JsonProperty("liwc_scores")
-    public void setLiwcScores(LiwcScores liwcScores) {
-        this.liwcScores = liwcScores;
-    }
+	/** The receptiviti scores. */
+	@JsonProperty("receptiviti_scores")
+	private ReceptivitiScores receptivitiScores;
 
-    @JsonProperty("content_date")
-    public String getContentDate() {
-        return contentDate;
-    }
+	/** The personality snapshot. */
+	@JsonProperty("personality_snapshot")
+	private List<PersonalitySnapshot> personalitySnapshot = null;
 
-    @JsonProperty("content_date")
-    public void setContentDate(String contentDate) {
-        this.contentDate = contentDate;
-    }
+	/** The emotional analysis. */
+	@JsonProperty("emotional_analysis")
+	private EmotionalAnalysis emotionalAnalysis;
 
-    @JsonProperty("content_tags")
-    public List<Object> getContentTags() {
-        return contentTags;
-    }
+	/** The links. */
+	@JsonProperty("_links")
+	private Links links;
 
-    @JsonProperty("content_tags")
-    public void setContentTags(List<Object> contentTags) {
-        this.contentTags = contentTags;
-    }
+	/** The additional properties. */
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("user")
-    public String getUser() {
-        return user;
-    }
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
+	@JsonProperty("_id")
+	public String getId() {
+		return id;
+	}
 
-    @JsonProperty("user")
-    public void setUser(String user) {
-        this.user = user;
-    }
+	/**
+	 * Sets the id.
+	 *
+	 * @param id
+	 *            the new id
+	 */
+	@JsonProperty("_id")
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    @JsonProperty("language")
-    public String getLanguage() {
-        return language;
-    }
+	/**
+	 * Gets the created.
+	 *
+	 * @return the created
+	 */
+	@JsonProperty("created")
+	public String getCreated() {
+		return created;
+	}
 
-    @JsonProperty("language")
-    public void setLanguage(String language) {
-        this.language = language;
-    }
+	/**
+	 * Sets the created.
+	 *
+	 * @param created
+	 *            the new created
+	 */
+	@JsonProperty("created")
+	public void setCreated(String created) {
+		this.created = created;
+	}
 
-    @JsonProperty("person")
-    public String getPerson() {
-        return person;
-    }
+	/**
+	 * Gets the updated.
+	 *
+	 * @return the updated
+	 */
+	@JsonProperty("updated")
+	public String getUpdated() {
+		return updated;
+	}
 
-    @JsonProperty("person")
-    public void setPerson(String person) {
-        this.person = person;
-    }
+	/**
+	 * Sets the updated.
+	 *
+	 * @param updated
+	 *            the new updated
+	 */
+	@JsonProperty("updated")
+	public void setUpdated(String updated) {
+		this.updated = updated;
+	}
 
-    @JsonProperty("communication_recommendation")
-    public String getCommunicationRecommendation() {
-        return communicationRecommendation;
-    }
+	/**
+	 * Gets the custom fields.
+	 *
+	 * @return the custom fields
+	 */
+	@JsonProperty("custom_fields")
+	public CustomFields getCustomFields() {
+		return customFields;
+	}
 
-    @JsonProperty("communication_recommendation")
-    public void setCommunicationRecommendation(String communicationRecommendation) {
-        this.communicationRecommendation = communicationRecommendation;
-    }
+	/**
+	 * Sets the custom fields.
+	 *
+	 * @param customFields
+	 *            the new custom fields
+	 */
+	@JsonProperty("custom_fields")
+	public void setCustomFields(CustomFields customFields) {
+		this.customFields = customFields;
+	}
 
-    @JsonProperty("receptiviti_scores")
-    public ReceptivitiScores getReceptivitiScores() {
-        return receptivitiScores;
-    }
+	/**
+	 * Gets the content source.
+	 *
+	 * @return the content source
+	 */
+	@JsonProperty("content_source")
+	public Integer getContentSource() {
+		return contentSource;
+	}
 
-    @JsonProperty("receptiviti_scores")
-    public void setReceptivitiScores(ReceptivitiScores receptivitiScores) {
-        this.receptivitiScores = receptivitiScores;
-    }
+	/**
+	 * Sets the content source.
+	 *
+	 * @param contentSource
+	 *            the new content source
+	 */
+	@JsonProperty("content_source")
+	public void setContentSource(Integer contentSource) {
+		this.contentSource = contentSource;
+	}
 
-    @JsonProperty("personality_snapshot")
-    public List<PersonalitySnapshot> getPersonalitySnapshot() {
-        return personalitySnapshot;
-    }
+	/**
+	 * Gets the liwc scores.
+	 *
+	 * @return the liwc scores
+	 */
+	@JsonProperty("liwc_scores")
+	public LiwcScores getLiwcScores() {
+		return liwcScores;
+	}
 
-    @JsonProperty("personality_snapshot")
-    public void setPersonalitySnapshot(List<PersonalitySnapshot> personalitySnapshot) {
-        this.personalitySnapshot = personalitySnapshot;
-    }
+	/**
+	 * Sets the liwc scores.
+	 *
+	 * @param liwcScores
+	 *            the new liwc scores
+	 */
+	@JsonProperty("liwc_scores")
+	public void setLiwcScores(LiwcScores liwcScores) {
+		this.liwcScores = liwcScores;
+	}
 
-    @JsonProperty("emotional_analysis")
-    public EmotionalAnalysis getEmotionalAnalysis() {
-        return emotionalAnalysis;
-    }
+	/**
+	 * Gets the content date.
+	 *
+	 * @return the content date
+	 */
+	@JsonProperty("content_date")
+	public String getContentDate() {
+		return contentDate;
+	}
 
-    @JsonProperty("emotional_analysis")
-    public void setEmotionalAnalysis(EmotionalAnalysis emotionalAnalysis) {
-        this.emotionalAnalysis = emotionalAnalysis;
-    }
+	/**
+	 * Sets the content date.
+	 *
+	 * @param contentDate
+	 *            the new content date
+	 */
+	@JsonProperty("content_date")
+	public void setContentDate(String contentDate) {
+		this.contentDate = contentDate;
+	}
 
-    @JsonProperty("_links")
-    public Links getLinks() {
-        return links;
-    }
+	/**
+	 * Gets the content tags.
+	 *
+	 * @return the content tags
+	 */
+	@JsonProperty("content_tags")
+	public List<Object> getContentTags() {
+		return contentTags;
+	}
 
-    @JsonProperty("_links")
-    public void setLinks(Links links) {
-        this.links = links;
-    }
+	/**
+	 * Sets the content tags.
+	 *
+	 * @param contentTags
+	 *            the new content tags
+	 */
+	@JsonProperty("content_tags")
+	public void setContentTags(List<Object> contentTags) {
+		this.contentTags = contentTags;
+	}
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+	/**
+	 * Gets the user.
+	 *
+	 * @return the user
+	 */
+	@JsonProperty("user")
+	public String getUser() {
+		return user;
+	}
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+	/**
+	 * Sets the user.
+	 *
+	 * @param user
+	 *            the new user
+	 */
+	@JsonProperty("user")
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	/**
+	 * Gets the language.
+	 *
+	 * @return the language
+	 */
+	@JsonProperty("language")
+	public String getLanguage() {
+		return language;
+	}
+
+	/**
+	 * Sets the language.
+	 *
+	 * @param language
+	 *            the new language
+	 */
+	@JsonProperty("language")
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	/**
+	 * Gets the person.
+	 *
+	 * @return the person
+	 */
+	@JsonProperty("person")
+	public String getPerson() {
+		return person;
+	}
+
+	/**
+	 * Sets the person.
+	 *
+	 * @param person
+	 *            the new person
+	 */
+	@JsonProperty("person")
+	public void setPerson(String person) {
+		this.person = person;
+	}
+
+	/**
+	 * Gets the communication recommendation.
+	 *
+	 * @return the communication recommendation
+	 */
+	@JsonProperty("communication_recommendation")
+	public String getCommunicationRecommendation() {
+		return communicationRecommendation;
+	}
+
+	/**
+	 * Sets the communication recommendation.
+	 *
+	 * @param communicationRecommendation
+	 *            the new communication recommendation
+	 */
+	@JsonProperty("communication_recommendation")
+	public void setCommunicationRecommendation(String communicationRecommendation) {
+		this.communicationRecommendation = communicationRecommendation;
+	}
+
+	/**
+	 * Gets the receptiviti scores.
+	 *
+	 * @return the receptiviti scores
+	 */
+	@JsonProperty("receptiviti_scores")
+	public ReceptivitiScores getReceptivitiScores() {
+		return receptivitiScores;
+	}
+
+	/**
+	 * Sets the receptiviti scores.
+	 *
+	 * @param receptivitiScores
+	 *            the new receptiviti scores
+	 */
+	@JsonProperty("receptiviti_scores")
+	public void setReceptivitiScores(ReceptivitiScores receptivitiScores) {
+		this.receptivitiScores = receptivitiScores;
+	}
+
+	/**
+	 * Gets the personality snapshot.
+	 *
+	 * @return the personality snapshot
+	 */
+	@JsonProperty("personality_snapshot")
+	public List<PersonalitySnapshot> getPersonalitySnapshot() {
+		return personalitySnapshot;
+	}
+
+	/**
+	 * Sets the personality snapshot.
+	 *
+	 * @param personalitySnapshot
+	 *            the new personality snapshot
+	 */
+	@JsonProperty("personality_snapshot")
+	public void setPersonalitySnapshot(List<PersonalitySnapshot> personalitySnapshot) {
+		this.personalitySnapshot = personalitySnapshot;
+	}
+
+	/**
+	 * Gets the emotional analysis.
+	 *
+	 * @return the emotional analysis
+	 */
+	@JsonProperty("emotional_analysis")
+	public EmotionalAnalysis getEmotionalAnalysis() {
+		return emotionalAnalysis;
+	}
+
+	/**
+	 * Sets the emotional analysis.
+	 *
+	 * @param emotionalAnalysis
+	 *            the new emotional analysis
+	 */
+	@JsonProperty("emotional_analysis")
+	public void setEmotionalAnalysis(EmotionalAnalysis emotionalAnalysis) {
+		this.emotionalAnalysis = emotionalAnalysis;
+	}
+
+	/**
+	 * Gets the links.
+	 *
+	 * @return the links
+	 */
+	@JsonProperty("_links")
+	public Links getLinks() {
+		return links;
+	}
+
+	/**
+	 * Sets the links.
+	 *
+	 * @param links
+	 *            the new links
+	 */
+	@JsonProperty("_links")
+	public void setLinks(Links links) {
+		this.links = links;
+	}
+
+	/**
+	 * Gets the additional properties.
+	 *
+	 * @return the additional properties
+	 */
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	/**
+	 * Sets the additional property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
 
 }

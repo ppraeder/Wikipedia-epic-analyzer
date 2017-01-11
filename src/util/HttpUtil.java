@@ -18,7 +18,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 /**
  * 
@@ -52,24 +51,20 @@ public class HttpUtil {
 				request.setConfig(localConfig); 
 				response = client.execute(request);
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.out.println("Try again");
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 					System.out.println("Thread sleep interrupted");
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.out.println("Try again");
 				try {
-					Thread.sleep(50);
+					Thread.sleep(500);
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 					System.out.println("Thread sleep interrupted");
 				}

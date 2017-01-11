@@ -14,59 +14,70 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.google.gson.Gson;
+import com.ibm.watson.developer_cloud.alchemy.v1.AlchemyLanguage;
+import com.ibm.watson.developer_cloud.alchemy.v1.model.DocumentSentiment;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ElementTone;
-import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.SentenceTone;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneAnalysis;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneCategory;
 import com.ibm.watson.developer_cloud.tone_analyzer.v3.model.ToneScore;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import entity.PageExtract;
-import entity.Person;
+import entity.Page;
 import entity.receptiviti.Content;
 import entity.receptiviti.ReceptivitiAnalysis;
 import util.database.DbConnector;
 import util.database.SqlConstants;
+import util.external.AlchemyLanguageUtil;
+import util.external.ReceptivitiUtil;
+import util.external.ToneAnalyzerUtil;
 
 /**
  * 
- * The class is used to access the contents of a Json formatted text.
+ * This class is the main class which contains most of the functions.
  *
  */
 public class IO {
+
 	/**
-	 * A content is read from a file and is converted to a person object
+	 * A content is read from a file and is converted to a page object
 	 * 
 	 * @param path
 	 *            a path to a file with content to convert
 	 * @return a list of person objects
 	 * 
 	 */
-	public List<Person> readFromJsonFile(String path) throws FileNotFoundException {
+	public List<Page> readFromJsonFile(String path) throws FileNotFoundException {
 		Scanner testScanner = new Scanner(new BufferedReader(new FileReader(path)));
 		Gson g = new Gson();
-		List<Person> pageList = new ArrayList<>();
+		List<Page> pageList = new ArrayList<>();
 		while (testScanner.hasNext()) {
-			pageList.add(g.fromJson(testScanner.nextLine(), Person.class));
+			pageList.add(g.fromJson(testScanner.nextLine(), Page.class));
 		}
 		g = null;
 		testScanner.close();
@@ -74,152 +85,391 @@ public class IO {
 		return pageList;
 	}
 
+	public List<Integer> tempList = new ArrayList<>();
+
 	/**
-	 * A method to write a list of persons in Json format to file
+	 * A method to write a list of pages in Json format to file
 	 * 
-	 * @param personList
+	 * @param pageList
 	 *            a list of person objects
 	 * @param path
 	 *            a path to a file, where the list of persons should be written
 	 * 
 	 */
-	public void writeToJsonFile(List<Person> personList, String path) throws IOException {
+	public void writeToJsonFile(List<Page> pageList, String path) throws IOException {
 		Gson g = new Gson();
 		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
-		for (Iterator<Person> iterator = personList.iterator(); iterator.hasNext();) {
+		for (Iterator<Page> iterator = pageList.iterator(); iterator.hasNext();) {
 			out.write(g.toJson(iterator.next()) + "\n");
 		}
 		out.close();
 	}
 
-	public List<Person> getExtractsFromDatabase() throws SQLException {
+	/*
+	 * public void openBrowser() throws SQLException, MalformedURLException,
+	 * UnsupportedEncodingException { String basicLink =
+	 * "https://en.wikipedia.org/wiki/"; DbConnector db = null; try { db = new
+	 * DbConnector(); } catch (ClassNotFoundException | SQLException e1) {
+	 * e1.printStackTrace(); } ResultSet pageResult = db.executeQuery(
+	 * "SELECT * FROM pages WHERE ibmTone IS NOT NULL"); while
+	 * (pageResult.next()) { String title = pageResult.getString("title"); URL u
+	 * = new URL(basicLink + URLEncoder.encode(title, "UTF-8").replace("+",
+	 * "%20")); openWebpage(u); try { Thread.sleep(500); } catch
+	 * (InterruptedException e) { e.printStackTrace(); } }
+	 * 
+	 * }
+	 * 
+	 * public static void openWebpage(URI uri) { Desktop desktop =
+	 * Desktop.isDesktopSupported() ? Desktop.getDesktop() : null; if (desktop
+	 * != null && desktop.isSupported(Desktop.Action.BROWSE)) { try {
+	 * desktop.browse(uri); } catch (Exception e) { e.printStackTrace(); } } }
+	 * 
+	 * public static void openWebpage(URL url) { try { openWebpage(url.toURI());
+	 * } catch (URISyntaxException e) { e.printStackTrace(); } }
+	 */
+	public void getLinksFromWikipediaTemplate() throws IOException, JSONException, SQLException {
+		List<Page> pages = this.getExtractsFromDatabase();
+
+		for (List<Page> splitList : CommonFunctions.split(pages, 10)) {
+			// new Thread() {
+			// @Override
+			// public void run() {
+			for (Page page : splitList) {
+				try {
+					getLinksFromWikipedia(page, true);
+				} catch (IOException | JSONException | SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			// }
+			//
+			// }.start();
+		}
+	}
+
+	public void getLinksFromWikipediaConnection() throws IOException, JSONException, SQLException {
+		List<Page> pages = this.getCharactersFromDatabase();
+		for (Page p : pages) {
+			tempList.add(p.getPageId());
+		}
+		for (List<Page> splitList : CommonFunctions.split(pages, 5)) {
+			new Thread() {
+				@Override
+				public void run() {
+					for (Page page : splitList) {
+						try {
+							getLinksFromWikipedia(page, false);
+						} catch (IOException | JSONException | SQLException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+			}.start();
+		}
+	}
+
+	private void getLinksFromWikipedia(Page page, boolean fromTemplate)
+			throws IOException, JSONException, SQLException {
+
+		String pageTitle = page.getTitle();
+		URL url = new URL("https://en.wikipedia.org/wiki/" + pageTitle.replace(" ", "%20"));
+		URLConnection con = url.openConnection();
+		InputStream in = con.getInputStream();
+		String encoding = con.getContentEncoding();
+		encoding = encoding == null ? "UTF-8" : encoding;
+		String body = IOUtils.toString(in, encoding);
+		Document doc = Jsoup.parse(body);
+		// Nur Dokument betrachten
+		Element content = doc.getElementById("content");
+		Elements template = content.select("div[role=navigation]");
+
+		for (Element e : template) {
+			if (fromTemplate) {
+				Elements rows = e.select("tr");
+				for (Element row : rows) {
+					Element cell = row.select("th").first();
+					if (cell == null || !cell.html().contains("Character")) {
+						continue;
+
+					}
+					Elements groups = row.select(".navbox-group");
+					if (groups.size() != 0) {
+						if (row.html().contains("Characters")) {
+							getLinks(page, row, false);
+						}
+					}
+				}
+			}
+			e.remove();
+		}
+
+		if (!fromTemplate) {
+			getLinks(page, content, true);
+		}
+
+	}
+
+	private void getLinks(Page page, Element content, boolean withConnection) throws JSONException, SQLException {
+		String pageTitle = page.getTitle();
+		String pageId = String.valueOf(page.getPageId());
+		Elements links = content.select("a[href]");
+		PageApi pa = new PageApi();
+		for (Iterator<Element> iterator = links.iterator(); iterator.hasNext();) {
+			Element element = iterator.next();
+			String link = element.attr("href");
+			if (link.startsWith("/wiki/")) {
+				if (link.startsWith("/wiki/Category:") || link.startsWith("/wiki/Special:")
+						|| link.startsWith("/wiki/Wikipedia:") || link.startsWith("/wiki/Help:")
+						|| link.startsWith("/wiki/Template:") || link.startsWith("/wiki/Portal:")
+						|| link.startsWith("/wiki/Talk:") || link.startsWith("/wiki/" + pageTitle + ":")
+						|| link.startsWith("/wiki/File:") || link.startsWith("/wiki/Template_talk:")) {
+					continue;
+				}
+				link = link.replace("/wiki/", "");
+				Page character = pa.getPageInfoForTitle(link);
+				if (withConnection) {
+					if (tempList.contains(character.getPageId())) {
+						persistConnection(pageId, character);
+					}
+
+				}
+
+				else {
+					persistCharacter(pageId, character);
+				}
+
+			}
+		}
+	}
+
+	private void persistConnection(String parentPageId, Page character) throws SQLException {
+		try {
+			final DbConnector db = new DbConnector();
+
+			ResultSet rs = db.executeQuery(SqlConstants.CONNECTION_EXISTS,
+					Arrays.asList(parentPageId, String.valueOf(character.getPageId())));
+			if (!rs.first()) {
+				db.executeUpdate(SqlConstants.CONNECTION_INSERT,
+						Arrays.asList(parentPageId, String.valueOf(character.getPageId()), "EN"));
+			} else {
+				db.executeUpdate(SqlConstants.CONNECTION_INCREMENT,
+						Arrays.asList(parentPageId, String.valueOf(character.getPageId())));
+			}
+
+		} catch (SQLIntegrityConstraintViolationException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void persistCharacter(String parentPageId, Page character) throws SQLException {
+		try {
+			final DbConnector db = new DbConnector();
+			ResultSet rs = db.executeQuery(SqlConstants.CHARACTER_EXISTS,
+					Arrays.asList(String.valueOf(character.getPageId()), parentPageId));
+			if (!rs.first()) {
+				db.executeUpdate(SqlConstants.CHARACTER_INSERT,
+						Arrays.asList(String.valueOf(character.getPageId()), parentPageId, character.getTitle(), "EN"));
+			}
+
+		} catch (SQLIntegrityConstraintViolationException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public List<Page> getExtractsFromDatabase() throws SQLException {
 		DbConnector db = null;
 		try {
 			db = new DbConnector();
 		} catch (ClassNotFoundException | SQLException e1) {
 			e1.printStackTrace();
 		}
-		ResultSet pageResult = db.executeQuery("SELECT * FROM pages");
-		List<Person> personList = new ArrayList<>();
+		ResultSet pageResult = db.executeQuery(SqlConstants.GET_PAGES);
+
+		List<Page> pageList = new ArrayList<>();
 		Gson gson = new Gson();
 		while (pageResult.next()) {
 			int pageId = pageResult.getInt("pageId");
 			String title = pageResult.getString("title");
+			int earliestYear = pageResult.getInt("earliestYear");
+			int latestYear = pageResult.getInt("latestYear");
 			ToneAnalysis ibmTone = gson.fromJson(pageResult.getString("ibmTone"), ToneAnalysis.class);
 			ReceptivitiAnalysis liwcTone = gson.fromJson(pageResult.getString("liwcTone"), ReceptivitiAnalysis.class);
-			Person p = new Person(pageId, title);
-			p.setIbmTone(ibmTone);
-			p.setLiwcTone(liwcTone);
+			DocumentSentiment docSentiment = gson.fromJson(pageResult.getString("alchemyTone"),
+					DocumentSentiment.class);
+			Page page = new Page(pageId, title);
+			page.setIbmTone(ibmTone);
+			page.setLiwcTone(liwcTone);
+			page.setDocumentSentiment(docSentiment);
+			page.setEarliestYear(earliestYear);
+			page.setLatestYear(latestYear);
 			ResultSet rs = db.executeQuery(SqlConstants.PAGE_EXTRACT_GET, Arrays.asList(String.valueOf(pageId)));
-			List<PageExtract> peList = new ArrayList<>();
-			while (rs.next()) {
-				String heading = rs.getString("heading");
-				String content = rs.getString("content");
-				// ToneAnalysis ibmTone = gson.fromJson(rs.getString("ibmTone"),
-				// ToneAnalysis.class);
-				// ReceptivitiAnalysis liwcTone =
-				// gson.fromJson(rs.getString("liwcTone"),
-				// ReceptivitiAnalysis.class);
-				PageExtract pe = new PageExtract(heading, content);
-				pe.setLiwcTone(liwcTone);
-				peList.add(pe);
-			}
+			// List<PageExtract> peList = new ArrayList<>();
+			// while (rs.next()) {
+			// String heading = rs.getString("heading");
+			// String content = rs.getString("content");
+			// ToneAnalysis ibmTone = gson.fromJson(rs.getString("ibmTone"),
+			// ToneAnalysis.class);
+			// ReceptivitiAnalysis liwcTone =
+			// gson.fromJson(rs.getString("liwcTone"),
+			// ReceptivitiAnalysis.class);
+			// PageExtract pe = new PageExtract(heading, content);
+			// pe.setLiwcTone(liwcTone);
+			// peList.add(pe);
+			// }
 			rs.close();
-			p.setPageExtracts(peList);
-			personList.add(p);
+			// p.setPageExtracts(peList);
+			pageList.add(page);
 		}
 		pageResult.close();
-		return personList;
+		return pageList;
 	}
 
-	public void writeToCSV(List<Person> personList, String path) throws IOException {
+	public List<Page> getCharactersFromDatabase() throws SQLException {
+		DbConnector db = null;
+		try {
+			db = new DbConnector();
+		} catch (ClassNotFoundException | SQLException e1) {
+			e1.printStackTrace();
+		}
+		ResultSet pageResult = db.executeQuery(SqlConstants.SELECT_CHARACTERS);
+
+		List<Page> pageList = new ArrayList<>();
+		while (pageResult.next()) {
+			int pageId = pageResult.getInt("pageId");
+			String title = pageResult.getString("title");
+			Page page = new Page(pageId, title);
+			pageList.add(page);
+		}
+		pageResult.close();
+		return pageList;
+	}
+
+	/**
+	 * Prints out the collected Tones together with page meta data into readable
+	 * and editable csv-file.
+	 * 
+	 * @param path
+	 * @throws IOException
+	 * @throws SQLException
+	 */
+	public void writeToCSV(String path) throws IOException, SQLException {
 		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
-		// Titel
-		out.write("pageId;title;earliestYear;latestYear;heading;content;");
+		// Title
+		out.write("pageId;title;earliest year;latest year;mean year;");
 		// IBM
 		out.write(
 				"Anger;Disgust;Fear;Joy;Sadness;Analytical;Confident;Tentative;Openness;Conscientiousness;Extraversion;Agreeableness;Emotional Range;");
 		// LIWC
 		out.write(
-				"LIWC;Word Count;Analytical thinking;Clout;Authentic;Emotional tone;Positive Emotion;Negative Emotion;Anxiety;Anger;Sadness;Tentative;Certainty,Power;Risk;Death");
+				"LIWC;Word Count;Analytical thinking;Clout;Authentic;Emotional tone;Dictionary Words;Positive Emotion;Negative Emotion;Anxiety;Anger;Sadness;Tentative;Certainty;Power;Risk;Death;");
+		out.write("AlchemyTone;mixed;score;type;");
 		out.write("\n");
-		for (Person person : personList) {
-			int pageId = person.getPageid();
-			String title = person.getTitle();
-			for (PageExtract pageExtract : person.getPageExtracts()) {
-				String heading = pageExtract.getHeading();
-				String content = StringEscapeUtils.escapeJava(pageExtract.getContent().replaceAll(";", "|"));
-				ToneAnalysis ibmTone = pageExtract.getIbmTone();
-				ReceptivitiAnalysis liwcTone = pageExtract.getLiwcTone();
-
-				if (ibmTone != null) {
-					out.write(pageId + ";" + title + ";" + heading + ";" + content + ";");
-					ElementTone documentTone = ibmTone.getDocumentTone();
-					List<ToneCategory> toneCategories = documentTone.getTones();
-					for (ToneCategory toneCategory : toneCategories) {
-						List<ToneScore> toneScores = toneCategory.getTones();
-						for (ToneScore toneScore : toneScores) {
-//							String name = toneScore.getName();
-							double score = toneScore.getScore();
-							out.write(String.valueOf(score).replace('.', ','));
-							out.write(";");
-						}
-					}
-
-					// List<SentenceTone> sentencesTone =
-					// ibmTone.getSentencesTone();
-					out.write(";");
-
-					if (liwcTone != null) {
-						Integer wordCount = liwcTone.getLiwcScores().getWc();
-						Double analyticalThinking = liwcTone.getLiwcScores().getAnalytic();
-						int clout = liwcTone.getLiwcScores().getClout();
-						int authentic = liwcTone.getLiwcScores().getAuthentic();
-						Double emotionalTone = liwcTone.getLiwcScores().getTone();
-						int wordsPerSentence = liwcTone.getLiwcScores().getWps();
-						int dictionaryWords = liwcTone.getLiwcScores().getDic();
-
-						int posEmo = liwcTone.getLiwcScores().getCategories().getPosemo();
-						int negEmo = liwcTone.getLiwcScores().getCategories().getNegemo();
-						int anxiety = liwcTone.getLiwcScores().getCategories().getAnx();
-						int anger = liwcTone.getLiwcScores().getCategories().getAnger();
-						int sadness = liwcTone.getLiwcScores().getCategories().getSad();
-						int tentative = liwcTone.getLiwcScores().getCategories().getTentat();
-						int certainty = liwcTone.getLiwcScores().getCategories().getCertain();
-						int power = liwcTone.getLiwcScores().getCategories().getPower();
-						int risk = liwcTone.getLiwcScores().getCategories().getRisk();
-						int death = liwcTone.getLiwcScores().getCategories().getDeath();
-
-						out.write(wordCount + ";");
-						out.write(String.valueOf(analyticalThinking).replace('.', ',') + ";");
-						out.write(clout + ";");
-						out.write(authentic + ";");
-						out.write(String.valueOf(emotionalTone).replace('.', ',') + ";");
-						out.write(dictionaryWords + ";");
-						out.write(posEmo + ";");
-						out.write(negEmo + ";");
-						out.write(anxiety + ";");
-						out.write(anger + ";");
-						out.write(sadness + ";");
-						out.write(tentative + ";");
-						out.write(certainty + ";");
-						out.write(power + ";");
-						out.write(risk + ";");
-						out.write(death + ";");
+		for (Page page : this.getExtractsFromDatabase()) {
+			int pageId = page.getPageId();
+			String title = page.getTitle();
+			// for (PageExtract pageExtract : person.getPageExtracts()) {
+			// String heading = pageExtract.getHeading();
+			// String content =
+			// StringEscapeUtils.escapeJava(pageExtract.getContent().replaceAll(";",
+			// "|"));
+			ToneAnalysis ibmTone = page.getIbmTone();
+			ReceptivitiAnalysis liwcTone = page.getLiwcTone();
+			DocumentSentiment docSentiment = page.getDocumentSentiment();
+			int earliestYear = page.getEarliestYear();
+			int latestYear = page.getLatestYear();
+			int meanYear = 0;
+			if (earliestYear == 0) {
+				meanYear = latestYear;
+			} else {
+				meanYear = (earliestYear + latestYear) / 2;
+			}
+			if (ibmTone != null) {
+				out.write(pageId + ";" + title + ";" + earliestYear + ";" + latestYear + ";" + meanYear + ";");
+				ElementTone documentTone = ibmTone.getDocumentTone();
+				List<ToneCategory> toneCategories = documentTone.getTones();
+				for (ToneCategory toneCategory : toneCategories) {
+					List<ToneScore> toneScores = toneCategory.getTones();
+					for (ToneScore toneScore : toneScores) {
+						// String name = toneScore.getName();
+						double score = toneScore.getScore();
+						out.write(String.valueOf(score).replace('.', ','));
+						out.write(";");
 					}
 				}
-				out.write("\n");
 
+				// List<SentenceTone> sentencesTone =
+				// ibmTone.getSentencesTone();
+				out.write(";");
+
+				if (liwcTone != null) {
+					Double wordCount = liwcTone.getLiwcScores().getWc();
+					Double analyticalThinking = liwcTone.getLiwcScores().getAnalytic();
+					Double clout = liwcTone.getLiwcScores().getClout();
+					Double authentic = liwcTone.getLiwcScores().getAuthentic();
+					Double emotionalTone = liwcTone.getLiwcScores().getTone();
+					Double dictionaryWords = liwcTone.getLiwcScores().getDic();
+
+					Double posEmo = liwcTone.getLiwcScores().getCategories().getPosemo();
+					Double negEmo = liwcTone.getLiwcScores().getCategories().getNegemo();
+					Double anxiety = liwcTone.getLiwcScores().getCategories().getAnx();
+					Double anger = liwcTone.getLiwcScores().getCategories().getAnger();
+					Double sadness = liwcTone.getLiwcScores().getCategories().getSad();
+					Double tentative = liwcTone.getLiwcScores().getCategories().getTentat();
+					Double certainty = liwcTone.getLiwcScores().getCategories().getCertain();
+					Double power = liwcTone.getLiwcScores().getCategories().getPower();
+					Double risk = liwcTone.getLiwcScores().getCategories().getRisk();
+					Double death = liwcTone.getLiwcScores().getCategories().getDeath();
+
+					out.write(wordCount + ";");
+					out.write(String.valueOf(analyticalThinking).replace('.', ',') + ";");
+					out.write(String.valueOf(clout).replace('.', ',') + ";");
+					out.write(String.valueOf(authentic).replace('.', ',') + ";");
+					out.write(String.valueOf(emotionalTone).replace('.', ',') + ";");
+					out.write(String.valueOf(dictionaryWords).replace('.', ',') + ";");
+					out.write(String.valueOf(posEmo).replace('.', ',') + ";");
+					out.write(String.valueOf(negEmo).replace('.', ',') + ";");
+					out.write(String.valueOf(anxiety).replace('.', ',') + ";");
+					out.write(String.valueOf(anger).replace('.', ',') + ";");
+					out.write(String.valueOf(sadness).replace('.', ',') + ";");
+					out.write(String.valueOf(tentative).replace('.', ',') + ";");
+					out.write(String.valueOf(certainty).replace('.', ',') + ";");
+					out.write(String.valueOf(power).replace('.', ',') + ";");
+					out.write(String.valueOf(risk).replace('.', ',') + ";");
+					out.write(String.valueOf(death).replace('.', ',') + ";");
+				}
+				out.write(";");
+				if (docSentiment != null) {
+					String mixed = docSentiment.getSentiment().getMixed();
+					Double score = docSentiment.getSentiment().getScore();
+					String type = docSentiment.getSentiment().getType().toString();
+					out.write(String.valueOf(mixed).replace('.', ',') + ";");
+					out.write(String.valueOf(score).replace('.', ',') + ";");
+					out.write(String.valueOf(type).replace('.', ',') + ";");
+				}
+				out.write("\n");
 			}
-			out.close();
-			return;
+
+			// }
+
 		}
+		out.close();
 
 	}
 
 	public void getIBMTone() throws SQLException {
 		for (List<PageExtract> splitList : CommonFunctions.split(getList(), 30)) {
 			getIBMToneThreadList(splitList);
+		}
+	}
+
+	public void getAlchemyTone() throws SQLException {
+		for (List<PageExtract> splitList : CommonFunctions.split(getList(), 30)) {
+			getDocumentSentimentThreadList(splitList);
 		}
 	}
 
@@ -248,9 +498,12 @@ public class IO {
 		return list;
 	}
 
-	public void getLIWCToneThreadList(final List<PageExtract> pl) {
-		final Receptiviti r = new Receptiviti(liwcServer, liwcApiKey, liwcApiSecretKey);
-
+	/**
+	 * Threaded function to get liwc analysis
+	 * 
+	 * @param pl
+	 */
+	private void getLIWCToneThreadList(final List<PageExtract> pl) {
 		final Gson g = new Gson();
 		try {
 			final DbConnector db = new DbConnector();
@@ -262,14 +515,13 @@ public class IO {
 						String content = p.getContent();
 						if (!content.equals("")) {
 							try {
-								ReceptivitiAnalysis a = r.analyseContent(liwcPersonId, new Content(content));
+								ReceptivitiAnalysis a = ReceptivitiUtil.getInstance()
+										.analyseContent(new Content(content));
 								db.executeUpdate(SqlConstants.PAGE_LIWC_TONE_UPDATE,
 										Arrays.asList(g.toJson(a), String.valueOf(p.getPageId())));
 							} catch (UnirestException | JSONException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (SQLException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -283,8 +535,12 @@ public class IO {
 		}
 	}
 
-	public void getIBMToneThreadList(final List<PageExtract> pl) {
-		final Gson g = new Gson();
+	/**
+	 * Threaded function to get ibm analysis
+	 * 
+	 * @param pl
+	 */
+	private void getIBMToneThreadList(final List<PageExtract> pl) {
 		try {
 			final DbConnector db = new DbConnector();
 
@@ -300,7 +556,6 @@ public class IO {
 								db.executeUpdate(SqlConstants.PAGE_IBM_TONE_UPDATE,
 										Arrays.asList(a.toString(), String.valueOf(p.getPageId())));
 							} catch (SQLException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -314,41 +569,160 @@ public class IO {
 		}
 	}
 
-	public void writeToDatabase(List<Person> personList) {
+	/**
+	 * Threaded function to get documentTone
+	 * 
+	 * @param pl
+	 */
+	private void getDocumentSentimentThreadList(final List<PageExtract> pl) {
+		try {
+			final DbConnector db = new DbConnector();
+
+			new Thread() {
+				@Override
+				public void run() {
+					for (PageExtract p : pl) {
+						String content = p.getContent();
+						if (!content.equals("")) {
+							try {
+								/**
+								 * Put string into map and get tone
+								 */
+								Map<String, Object> params = new HashMap<String, Object>();
+								params.put(AlchemyLanguage.TEXT, content);
+								DocumentSentiment docSentiment = AlchemyLanguageUtil.getInstance()
+										.getDocumentSentiment(params);
+
+								db.executeUpdate(SqlConstants.PAGE_ALCHEMY_TONE_UPDATE,
+										Arrays.asList(docSentiment.toString(), String.valueOf(p.getPageId())));
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+
+				}
+
+			}.start();
+		} catch (ClassNotFoundException | SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	/**
+	 * This function writes a list of pages to the database
+	 * 
+	 * @param pageList
+	 */
+	public void writeToDatabase(List<Page> pageList) {
 		DbConnector db = null;
 		try {
 			db = new DbConnector();
 		} catch (ClassNotFoundException | SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		for (Person person : personList) {
+		for (Page page : pageList) {
 			try {
-				db.executeUpdate(SqlConstants.PAGE_INSERT, Arrays.asList(String.valueOf(person.getPageid()),
-						person.getTitle(), String.valueOf(person.getNs()), "EN"));
+				db.executeUpdate(SqlConstants.PAGE_INSERT, Arrays.asList(String.valueOf(page.getPageId()),
+						page.getTitle(), String.valueOf(page.getNs()), "EN"));
 				db.executeUpdate(SqlConstants.PAGE_CONTENT_INSERT,
-						Arrays.asList(String.valueOf(person.getPageid()), person.getExtract()));
+						Arrays.asList(String.valueOf(page.getPageId()), page.getExtract()));
 				int position = 0;
-				for (String key : person.getExtractMap().keySet()) {
+				for (String key : page.getExtractMap().keySet()) {
 					String fullText = "";
-					LinkedHashMap<String, String> textMap = person.getExtractMap().get(key);
+					LinkedHashMap<String, String> textMap = page.getExtractMap().get(key);
 					for (String textMapKey : textMap.keySet()) {
 						fullText += textMap.get(textMapKey);
 					}
 					db.executeUpdate(SqlConstants.PAGE_EXTRACT_INSERT,
-							Arrays.asList(String.valueOf(person.getPageid()), key, fullText, String.valueOf(position)));
+							Arrays.asList(String.valueOf(page.getPageId()), key, fullText, String.valueOf(position)));
 					position++;
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		try {
 			db.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * The method calculates the outdegree and indegree depending on the
+	 * characterlist. It only considers the characters for a specific parent
+	 * page so that no cross reference is interfering the degrees.
+	 */
+	public void setDegree() {
+		new Thread() {
+			@Override
+			public void run() {
+				DbConnector db = null;
+				try {
+					db = new DbConnector();
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				ResultSet r = null;
+				try {
+					r = db.executeQuery(SqlConstants.GET_PAGES_WITH_CHARACTERS);
+					while (r.next()) {
+						// Iterate over all Pages
+						String pageId = r.getString("pageId");
+						ResultSet characters = db.executeQuery(SqlConstants.BASE_QUERY_FOR_DEGREE,
+								Arrays.asList(pageId, pageId));
+						Map<String, Integer> outDegree = new HashMap<>();
+						Map<String, Integer> inDegree = new HashMap<>();
+						while (characters.next()) {
+							String fromPage = characters.getString("fromPageId");
+							String toPage = characters.getString("toPageId");
+							// Count outdegree
+							if (outDegree.containsKey(fromPage)) {
+								outDegree.put(fromPage, outDegree.get(fromPage) + 1);
+							} else {
+								outDegree.put(fromPage, 1);
+							}
+							// Count indegree
+							if (inDegree.containsKey(toPage)) {
+								inDegree.put(toPage, inDegree.get(toPage) + 1);
+							} else {
+								inDegree.put(toPage, 1);
+							}
+						}
+						Iterator<?> outDegreeIterator = outDegree.entrySet().iterator();
+						while (outDegreeIterator.hasNext()) {
+							@SuppressWarnings("rawtypes")
+							Map.Entry pair = (Map.Entry) outDegreeIterator.next();
+							db.executeUpdate(SqlConstants.UPDATE_OUTDEGREE,
+									Arrays.asList(String.valueOf(pair.getValue()), (String) pair.getKey(), pageId));
+							outDegreeIterator.remove(); // avoids a
+							// ConcurrentModificationException
+						}
+						Iterator<?> inDegreeIterator = inDegree.entrySet().iterator();
+						while (inDegreeIterator.hasNext()) {
+							@SuppressWarnings("rawtypes")
+							Map.Entry pair = (Map.Entry) inDegreeIterator.next();
+							db.executeUpdate(SqlConstants.UPDATE_INDEGREE,
+									Arrays.asList(String.valueOf(pair.getValue()), (String) pair.getKey(), pageId));
+							inDegreeIterator.remove(); // avoids a
+							// ConcurrentModificationException
+						}
+
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				try {
+					db.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}.start();
+	}
+
 }

@@ -18,66 +18,114 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
- * This class is part of the analysis result when calling the receptivity API
- *
+ * This class is part of the analysis result when calling the receptivity API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "anger",
-    "fear",
-    "sad"
-})
+@JsonPropertyOrder({ "anger", "fear", "sad" })
 public class Facets {
 
-    @JsonProperty("anger")
-    private Integer anger;
-    @JsonProperty("fear")
-    private Integer fear;
-    @JsonProperty("sad")
-    private Integer sad;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	/** The anger. */
+	@JsonProperty("anger")
+	private Double anger;
 
-    @JsonProperty("anger")
-    public Integer getAnger() {
-        return anger;
-    }
+	/** The fear. */
+	@JsonProperty("fear")
+	private Double fear;
 
-    @JsonProperty("anger")
-    public void setAnger(Integer anger) {
-        this.anger = anger;
-    }
+	/** The sad. */
+	@JsonProperty("sad")
+	private Double sad;
 
-    @JsonProperty("fear")
-    public Integer getFear() {
-        return fear;
-    }
+	/** The additional properties. */
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("fear")
-    public void setFear(Integer fear) {
-        this.fear = fear;
-    }
+	/**
+	 * Gets the anger.
+	 *
+	 * @return the anger
+	 */
+	@JsonProperty("anger")
+	public Double getAnger() {
+		return anger;
+	}
 
-    @JsonProperty("sad")
-    public Integer getSad() {
-        return sad;
-    }
+	/**
+	 * Sets the anger.
+	 *
+	 * @param anger
+	 *            the new anger
+	 */
+	@JsonProperty("anger")
+	public void setAnger(Double anger) {
+		this.anger = anger;
+	}
 
-    @JsonProperty("sad")
-    public void setSad(Integer sad) {
-        this.sad = sad;
-    }
+	/**
+	 * Gets the fear.
+	 *
+	 * @return the fear
+	 */
+	@JsonProperty("fear")
+	public Double getFear() {
+		return fear;
+	}
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+	/**
+	 * Sets the fear.
+	 *
+	 * @param fear
+	 *            the new fear
+	 */
+	@JsonProperty("fear")
+	public void setFear(Double fear) {
+		this.fear = fear;
+	}
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+	/**
+	 * Gets the sad.
+	 *
+	 * @return the sad
+	 */
+	@JsonProperty("sad")
+	public Double getSad() {
+		return sad;
+	}
+
+	/**
+	 * Sets the sad.
+	 *
+	 * @param sad
+	 *            the new sad
+	 */
+	@JsonProperty("sad")
+	public void setSad(Double sad) {
+		this.sad = sad;
+	}
+
+	/**
+	 * Gets the additional properties.
+	 *
+	 * @return the additional properties
+	 */
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	/**
+	 * Sets the additional property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
 
 }

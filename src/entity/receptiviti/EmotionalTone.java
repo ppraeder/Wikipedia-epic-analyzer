@@ -18,53 +18,89 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
- * This class is part of the analysis result when calling the receptivity API
- *
+ * This class is part of the analysis result when calling the receptivity API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "rating",
-    "score"
-})
+@JsonPropertyOrder({ "rating", "score" })
 public class EmotionalTone {
 
-    @JsonProperty("rating")
-    private String rating;
-    @JsonProperty("score")
-    private Double score;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	/** The rating. */
+	@JsonProperty("rating")
+	private String rating;
 
-    @JsonProperty("rating")
-    public String getRating() {
-        return rating;
-    }
+	/** The score. */
+	@JsonProperty("score")
+	private Double score;
 
-    @JsonProperty("rating")
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
+	/** The additional properties. */
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("score")
-    public Double getScore() {
-        return score;
-    }
+	/**
+	 * Gets the rating.
+	 *
+	 * @return the rating
+	 */
+	@JsonProperty("rating")
+	public String getRating() {
+		return rating;
+	}
 
-    @JsonProperty("score")
-    public void setScore(Double score) {
-        this.score = score;
-    }
+	/**
+	 * Sets the rating.
+	 *
+	 * @param rating
+	 *            the new rating
+	 */
+	@JsonProperty("rating")
+	public void setRating(String rating) {
+		this.rating = rating;
+	}
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+	/**
+	 * Gets the score.
+	 *
+	 * @return the score
+	 */
+	@JsonProperty("score")
+	public Double getScore() {
+		return score;
+	}
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+	/**
+	 * Sets the score.
+	 *
+	 * @param score
+	 *            the new score
+	 */
+	@JsonProperty("score")
+	public void setScore(Double score) {
+		this.score = score;
+	}
+
+	/**
+	 * Gets the additional properties.
+	 *
+	 * @return the additional properties
+	 */
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	/**
+	 * Sets the additional property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
 
 }

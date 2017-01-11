@@ -17,133 +17,263 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+// TODO: Auto-generated Javadoc
 /**
- * 
- * This class is part of the analysis result when calling the receptivity API
- *
+ * This class is part of the analysis result when calling the receptivity API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LiwcScores {
 
-    @JsonProperty("tone")
-    private Double tone;
-    @JsonProperty("sixLtr")
-    private Integer sixLtr;
-    @JsonProperty("clout")
-    private Integer clout;
-    @JsonProperty("wps")
-    private Integer wps;
-    @JsonProperty("analytic")
-    private Double analytic;
-    @JsonProperty("wc")
-    private Integer wc;
-    @JsonProperty("dic")
-    private Integer dic;
-    @JsonProperty("authentic")
-    private Integer authentic;
-    @JsonProperty("categories")
-    private Categories categories;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+	/** The tone. */
+	@JsonProperty("tone")
+	private Double tone;
 
-    @JsonProperty("tone")
-    public Double getTone() {
-        return tone;
-    }
+	/** The six ltr. */
+	@JsonProperty("sixLtr")
+	private Double sixLtr;
 
-    @JsonProperty("tone")
-    public void setTone(Double tone) {
-        this.tone = tone;
-    }
+	/** The clout. */
+	@JsonProperty("clout")
+	private Double clout;
 
-    @JsonProperty("sixLtr")
-    public Integer getSixLtr() {
-        return sixLtr;
-    }
+	/** The wps. */
+	@JsonProperty("wps")
+	private Double wps;
 
-    @JsonProperty("sixLtr")
-    public void setSixLtr(Integer sixLtr) {
-        this.sixLtr = sixLtr;
-    }
+	/** The analytic. */
+	@JsonProperty("analytic")
+	private Double analytic;
 
-    @JsonProperty("clout")
-    public Integer getClout() {
-        return clout;
-    }
+	/** The wc. */
+	@JsonProperty("wc")
+	private Double wc;
 
-    @JsonProperty("clout")
-    public void setClout(Integer clout) {
-        this.clout = clout;
-    }
+	/** The dic. */
+	@JsonProperty("dic")
+	private Double dic;
 
-    @JsonProperty("wps")
-    public Integer getWps() {
-        return wps;
-    }
+	/** The authentic. */
+	@JsonProperty("authentic")
+	private Double authentic;
 
-    @JsonProperty("wps")
-    public void setWps(Integer wps) {
-        this.wps = wps;
-    }
+	/** The categories. */
+	@JsonProperty("categories")
+	private Categories categories;
 
-    @JsonProperty("analytic")
-    public Double getAnalytic() {
-        return analytic;
-    }
+	/** The additional properties. */
+	@JsonIgnore
+	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("analytic")
-    public void setAnalytic(Double analytic) {
-        this.analytic = analytic;
-    }
+	/**
+	 * Gets the tone.
+	 *
+	 * @return the tone
+	 */
+	@JsonProperty("tone")
+	public Double getTone() {
+		return tone;
+	}
 
-    @JsonProperty("wc")
-    public Integer getWc() {
-        return wc;
-    }
+	/**
+	 * Sets the tone.
+	 *
+	 * @param tone
+	 *            the new tone
+	 */
+	@JsonProperty("tone")
+	public void setTone(Double tone) {
+		this.tone = tone;
+	}
 
-    @JsonProperty("wc")
-    public void setWc(Integer wc) {
-        this.wc = wc;
-    }
+	/**
+	 * Gets the six ltr.
+	 *
+	 * @return the six ltr
+	 */
+	@JsonProperty("sixLtr")
+	public Double getSixLtr() {
+		return sixLtr;
+	}
 
-    @JsonProperty("dic")
-    public Integer getDic() {
-        return dic;
-    }
+	/**
+	 * Sets the six ltr.
+	 *
+	 * @param sixLtr
+	 *            the new six ltr
+	 */
+	@JsonProperty("sixLtr")
+	public void setSixLtr(Double sixLtr) {
+		this.sixLtr = sixLtr;
+	}
 
-    @JsonProperty("dic")
-    public void setDic(Integer dic) {
-        this.dic = dic;
-    }
+	/**
+	 * Gets the clout.
+	 *
+	 * @return the clout
+	 */
+	@JsonProperty("clout")
+	public Double getClout() {
+		return clout;
+	}
 
-    @JsonProperty("authentic")
-    public Integer getAuthentic() {
-        return authentic;
-    }
+	/**
+	 * Sets the clout.
+	 *
+	 * @param clout
+	 *            the new clout
+	 */
+	@JsonProperty("clout")
+	public void setClout(Double clout) {
+		this.clout = clout;
+	}
 
-    @JsonProperty("authentic")
-    public void setAuthentic(Integer authentic) {
-        this.authentic = authentic;
-    }
+	/**
+	 * Gets the wps.
+	 *
+	 * @return the wps
+	 */
+	@JsonProperty("wps")
+	public Double getWps() {
+		return wps;
+	}
 
-    @JsonProperty("categories")
-    public Categories getCategories() {
-        return categories;
-    }
+	/**
+	 * Sets the wps.
+	 *
+	 * @param wps
+	 *            the new wps
+	 */
+	@JsonProperty("wps")
+	public void setWps(Double wps) {
+		this.wps = wps;
+	}
 
-    @JsonProperty("categories")
-    public void setCategories(Categories categories) {
-        this.categories = categories;
-    }
+	/**
+	 * Gets the analytic.
+	 *
+	 * @return the analytic
+	 */
+	@JsonProperty("analytic")
+	public Double getAnalytic() {
+		return analytic;
+	}
 
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
+	/**
+	 * Sets the analytic.
+	 *
+	 * @param analytic
+	 *            the new analytic
+	 */
+	@JsonProperty("analytic")
+	public void setAnalytic(Double analytic) {
+		this.analytic = analytic;
+	}
 
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+	/**
+	 * Gets the wc.
+	 *
+	 * @return the wc
+	 */
+	@JsonProperty("wc")
+	public Double getWc() {
+		return wc;
+	}
+
+	/**
+	 * Sets the wc.
+	 *
+	 * @param wc
+	 *            the new wc
+	 */
+	@JsonProperty("wc")
+	public void setWc(Double wc) {
+		this.wc = wc;
+	}
+
+	/**
+	 * Gets the dic.
+	 *
+	 * @return the dic
+	 */
+	@JsonProperty("dic")
+	public Double getDic() {
+		return dic;
+	}
+
+	/**
+	 * Sets the dic.
+	 *
+	 * @param dic
+	 *            the new dic
+	 */
+	@JsonProperty("dic")
+	public void setDic(Double dic) {
+		this.dic = dic;
+	}
+
+	/**
+	 * Gets the authentic.
+	 *
+	 * @return the authentic
+	 */
+	@JsonProperty("authentic")
+	public Double getAuthentic() {
+		return authentic;
+	}
+
+	/**
+	 * Sets the authentic.
+	 *
+	 * @param authentic
+	 *            the new authentic
+	 */
+	@JsonProperty("authentic")
+	public void setAuthentic(Double authentic) {
+		this.authentic = authentic;
+	}
+
+	/**
+	 * Gets the categories.
+	 *
+	 * @return the categories
+	 */
+	@JsonProperty("categories")
+	public Categories getCategories() {
+		return categories;
+	}
+
+	/**
+	 * Sets the categories.
+	 *
+	 * @param categories
+	 *            the new categories
+	 */
+	@JsonProperty("categories")
+	public void setCategories(Categories categories) {
+		this.categories = categories;
+	}
+
+	/**
+	 * Gets the additional properties.
+	 *
+	 * @return the additional properties
+	 */
+	@JsonAnyGetter
+	public Map<String, Object> getAdditionalProperties() {
+		return this.additionalProperties;
+	}
+
+	/**
+	 * Sets the additional property.
+	 *
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
+	@JsonAnySetter
+	public void setAdditionalProperty(String name, Object value) {
+		this.additionalProperties.put(name, value);
+	}
 
 }

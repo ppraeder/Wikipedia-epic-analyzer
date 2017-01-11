@@ -11,90 +11,56 @@ package util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import entity.Category;
-import entity.Person;
+import entity.Page;
 
 /**
- * This Class collects every category and the existing members.
+ * This Class contains all methods regarding category fetch in wikipedia
  */
 public class CategoryApi {
 
 	/** API Call to receive the categorymembers. */
 	private final String CATMEMBERS = "http://en.wikipedia.org/w/api.php?action=query&cmlimit=500&format=json&list=categorymembers&cmtype=%s&cmtitle=Category:%s&cmcontinue=%s";
 
-	/** API Call to receive the categories. */
-	private final String CATEGORIES = "http://en.wikipedia.org/w/api.php?format=json&action=query&prop=categories&cllimit=500&pageids=%s";
-
 	/** The PageApi. */
 	PageApi p;
 
-	/** The cmcontinue. This is the pagination index */
+	/** This is the pagination index */
 	private String cmcontinue = "";
 
 	/** The json. */
 	JSONObject json = null;
 
 	/**
-	 * Instantiates a new category api.
+	 * Instantiates a new category API.
 	 */
 	public CategoryApi() {
 		p = new PageApi();
 	}
 
-	/**
-	 * The method imports categories for each identified person from the
-	 * Wikipedia web page to the person object.
-	 *
-	 * @param p
-	 *            The person object where the categories will be temporaly
-	 *            stored.
-	 * @return the categories
-	 * @throws Exception
-	 *             the exception
-	 */
-	@SuppressWarnings("unchecked")
-	public void getCategories(Person p) throws Exception {
-		HttpUtil h = new HttpUtil();
-		String result = h.sendGet(String.format(CATEGORIES, p.getPageid()));
-
-		JSONObject json = CommonFunctions.getJSON(result);
-		JSONArray jsonArray = CommonFunctions
-				.getSubJSON(CommonFunctions.getSubJSON(CommonFunctions.getSubJSON(json, "query"), "pages"),
-						String.valueOf(p.getPageid()))
-				.getJSONArray("categories");
-		Gson gson = new Gson();
-		p.setCategoryList((List<Category>) gson.fromJson(jsonArray.toString(), new TypeToken<List<Category>>() {
-		}.getType()));
-
-	}
-
-	public List<Person> getCategoryMembers(Category c) throws Exception {
+	public List<Page> getCategoryMembers(Category c) throws Exception {
 		return getCategoryMembersOrSubcategories(c, false);
 	}
 
-	public List<Person> getCategorySubCategories(Category c) throws Exception {
+	public List<Page> getCategorySubCategories(Category c) throws Exception {
 		return getCategoryMembersOrSubcategories(c, true);
 	}
 
 	/**
-	 * The method gets a list of people who belong to a certain category from
+	 * The method gets a list of pages who belong to a certain category from
 	 * Wikipedia.
 	 *
 	 * @param c
-	 *            The category which is common to the result list of people
+	 *            The category which is common to the result list of pages
 	 * @return The list of people who belong to a certain category
 	 * @throws Exception
 	 *             the exception
 	 */
-	private List<Person> getCategoryMembersOrSubcategories(Category c, boolean subcategories) throws Exception {
-		List<Person> list = new ArrayList<Person>();
+	private List<Page> getCategoryMembersOrSubcategories(Category c, boolean subcategories) throws Exception {
+		List<Page> list = new ArrayList<Page>();
 		// The parameter cmtype specifies if the query returns subcategories or
 		// the pages in the category
 		String cmtype = "page";
