@@ -25,7 +25,7 @@ public class AlchemyLanguageUtil {
 	/**
 	 * please generate you own API key.
 	 */
-	private static final String API_KEY = "428f68259980d465269e40c148748abe263fa61d";
+	private static final String API_KEY = "428f68259980XXXXXXXXc148748abe263fa61d";
 
 	private AlchemyLanguage service;
 

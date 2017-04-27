@@ -31,16 +31,16 @@ public class ReceptivitiUtil {
 	/**
 	 * Create your own API key at https://app.receptiviti.com
 	 */
-	private static final String LIWS_API_KEY = "584da1446c904d05b7115169";
+	private static final String LIWS_API_KEY = "584da1446cXXXXXXX115169";
 	/**
 	 * Create your own API secret key at https://app.receptiviti.com
 	 */
-	private static final String LIWC_API_SECRET = "qPym2BVXN7xWgXeXjGQ2znOOHQDd4yeogYpJ3kvbPAo";
+	private static final String LIWC_API_SECRET = "qPym2BVXN7xWXXXXXXXpJ3kvbPAo";
 	/**
 	 * You have to generate a person manually in https://app.receptiviti.com and
 	 * add the persons id to get the service running
 	 */
-	private static final String LIWC_PERSON_ID = "584da2a3f86167081ba4e8ff";
+	private static final String LIWC_PERSON_ID = "584da2aXXXXXXXa4e8ff";
 	/**
 	 * 
 	 */

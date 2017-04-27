@@ -24,8 +24,8 @@ public class ToneAnalyzerUtil {
 	/**
 	 * please generate own API keys.
 	 */
-	private static final String USERNAME = "13b86776-6f08-451b-bd64-47ac3d152250";
-	private static final String PASSWORD = "137EqWpDOOgT";
+	private static final String USERNAME = "13b86776-XXXXXXXXX-bd64-47ac3d152250";
+	private static final String PASSWORD = "137XXXXDOOgT";
 
 	private ToneAnalyzer service;
 
